@@ -34,7 +34,7 @@ pr_df<-read_csv(here("data","raw","Most-Recent-Cohorts-Field-of-Study.csv"),
                 )%>%
   clean_names(case="snake")%>%
   filter(credlev<4)%>% ## UG degrees only
-  filter(!is.na(earn_mdn_hi_1yr))%>% ## Complete aata
+  filter(!is.na(earn_mdn_hi_1yr))%>% ## Complete data
   select(opeid6,creddesc,cipdesc, earn_mdn_hi_1yr) ## just id vars and earnings
 
 ## Load in scorecard data

@@ -63,7 +63,7 @@ save(tune_res,file="tune_res.Rdata")
 
 load("tune_res.Rdata")
 
-tune_res%>%
+gg<-tune_res%>%
   collect_metrics() %>%
   filter(.metric == "rmse")%>%
   select(mean,mtry,min_n)%>%
@@ -76,12 +76,16 @@ tune_res%>%
   facet_wrap(~parameter, scales = "free_x") +
   labs(x = NULL, y = "RMSE")
 
+save(gg,file = "rf_fit.Rdata")
+
+
 best_rmse <- select_best(tune_res, "rmse")
 
 final_rf <- finalize_model(
   tune_spec,
   best_rmse
 )
+
 
 final_rf
 
@@ -95,11 +99,16 @@ vi_final_rf<-final_rf %>%
 
 save(vi_final_rf,file="vi_final_rf.Rdata")
 
+load("vi_final_rf.Rdata")
+
 ## use vi instead, then plot
 
-vi_final_rf %>%
+gg<-vi_final_rf %>%
   slice(1:25) %>%
   ggplot(aes(x = Importance,
              y = fct_reorder(as_factor(Variable),
                             .x = Importance))) +
   geom_point()
+
+
+save(gg,file = "rf_vi.Rdata")

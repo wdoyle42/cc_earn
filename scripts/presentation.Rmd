@@ -1,0 +1,463 @@
+---
+title: 'Earnings of Recent Graduates: A Machine Learning Approach'
+author: "Will Doyle"
+date: "10/24/2021"
+output: 
+  slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,warning = FALSE,include=TRUE,message = FALSE,fig.width=10,fig.height  = 8)
+```
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(ggridges)
+library(scales)
+library(here)
+```
+
+```{r}
+cb_df<-read_rds(here("data","cleaned","cb_df.Rds"))
+```
+
+
+
+## First Year Earnings of Bachelor's Degree Holders
+```{r}
+cb_df%>%
+  group_by(cipdesc,creddesc)%>%
+  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
+  mutate(count=n())%>%
+  filter(count>20)%>%
+  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
+  group_by(creddesc)%>%
+  arrange(creddesc,desc(mean_earn)) %>% 
+  mutate(earn_rank=rank(-mean_earn))%>%
+  filter(earn_rank<2000)%>%
+  filter(creddesc=="Bachelors Degree")%>%
+  ggplot(aes(x=earn_mdn_hi_1yr,
+             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
+  geom_density_ridges()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  ylab("")+
+  xlab("")+
+  scale_x_continuous(labels=dollar_format())
+```
+
+
+## First Year Earnings of Associate Degree Holders
+```{r}
+
+cb_df%>%
+  group_by(cipdesc,creddesc)%>%
+  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
+  mutate(count=n())%>%
+  filter(count>20)%>%
+  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
+  group_by(creddesc)%>%
+  arrange(creddesc,desc(mean_earn)) %>% 
+  mutate(earn_rank=rank(-mean_earn))%>%
+  filter(earn_rank<2000)%>%
+  filter(creddesc=="Associate's Degree")%>%
+  ggplot(aes(x=earn_mdn_hi_1yr,
+             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
+  geom_density_ridges()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  ylab("")+
+  xlab("")+
+  scale_x_continuous(labels=dollar_format())
+```
+
+## First Year Earnings of Certificate Holders
+```{r}
+cb_df%>%
+  group_by(cipdesc,creddesc)%>%
+  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
+  mutate(count=n())%>%
+  filter(count>20)%>%
+  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
+  group_by(creddesc)%>%
+  arrange(creddesc,desc(mean_earn)) %>% 
+  mutate(earn_rank=rank(-mean_earn))%>%
+  filter(earn_rank<2000)%>%
+  filter(creddesc=="Undergraduate Certificate or Diploma")%>%
+  ggplot(aes(x=earn_mdn_hi_1yr,
+             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
+  geom_density_ridges()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  ylab("")+
+  xlab("")+
+  scale_x_continuous(labels=dollar_format())
+```
+
+
+
+## The Two Worlds of Current Applied Data Analysis
+  - Theory driven: testing hypotheses about a specific population parameter
+  
+  To what extent do programs in institutions with lower net prices graduate students with
+  higher earnings?
+
+  - ML driven
+
+How can we best predict the level of earnings from a given postsecondary program?
+
+My goal is to take the second approach as a contrast to the standard approach I would take to this issue, highlighting the relevant differences and some of the recent improvements in this area. 
+
+## Some Contrasts between the "two worlds"
+
+- Covariate selection
+
+  -- Theory driven approach assumes a model-- a specific (typically linear and additive) model that is useful for understanding the outcome. Emphasis is on estimates of parameters. 
+  
+  -- ML approach uses programmatic approaches to select predictors, with an emphasis on feature engineering for a large number of predictors. Many times coefficient or other parameter estimates are ignored. 
+  
+## Some Contrasts between the "two worlds"  
+  
+- Model selection
+
+-- Theory driven approach relies on a few workhorse models: OLS and Logistic regression (and variants for other outcomes) in particular. 
+
+-- ML approach uses a wide variety of predictive models, with an emphasis on model fit over interpretability
+
+## Some Contrasts between the "two worlds"
+
+- Model Fit
+
+-- Theory driven approaches are generally fairly indifferent to model fit, relying mostly on measures of fit that focus on variance ($r^2$, log likelihood) as opposed to accuracy (rmse), and rely on measures calculated from the full (training) dataset
+
+-- ML approaches 
+
+ML focuses on accuracy of the model: rmse for continuous outcomes, sensitivity/specificity/AUC for classification. Measures are calculated using cross-validation, many times with a final held out testing dataset.
+
+## The Data
+
+College Scorecard Program Level Data
+
+Program level earnings from 260,000 programs at accredited institutions across the United States. Includes earnings and debt level and repayment information for programs. 
+Dependent variable: Median earnings from graduates of the program after 1 year (using social security records)
+
+```{r,eval=FALSE,echo=TRUE}
+pr_df<-read_csv(here("data","raw","Most-Recent-Cohorts-Field-of-Study.csv"),
+                     na = c("PrivacySuppressed","NULL")
+                )%>%
+  clean_names(case="snake")%>%
+  filter(credlev<4)%>% ## UG degrees only
+  filter(!is.na(earn_mdn_hi_1yr))%>% ## Complete data
+  select(opeid6,creddesc,cipdesc, earn_mdn_hi_1yr) ## just id vars and earnings
+```
+
+## The Data
+
+College Scorecard College Level Data
+
+Characteristics of 6,700 accredited institutions of postsecondary education across the United States. A total of 2,392 variables. 
+
+```{r,eval=FALSE,echo=TRUE}
+## Load in scorecard data
+cb_df<-read_csv(here("data","raw","Most-Recent-Cohorts-All-Data-Elements.csv"),
+                 na=c("PrivacySuppressed","NULL"))%>%
+  clean_names(case="snake")%>%
+  mutate(opeid6=as.character(opeid6))
+```
+
+## The Data
+
+American Community Survey
+
+Zip-code level data from 33,000 zip codes, matched to institution zip code. Data from the
+[American Community Survey API](https://www.census.gov/data/developers/data-sets.html), as made easy to use by [tidycensus](https://walker-data.com/tidycensus/)
+I include four characteristics of each zip code:
+
+- Percent of population with at least a bachelor's degree
+- Percent of population with incomes over $75,000
+- Percent of population that owns their own home
+- Percent of population that move into the zip code in the last year. 
+
+```{r,eval=FALSE,echo=TRUE}
+educ <- get_acs(
+  geography = my_geo,
+  variables = var_list,
+  output = "wide",
+  year = 2019
+)
+```
+
+
+## Workflow Approach
+
+Project uses the `tidymodels` approach, which involves standardizing steps 
+in data analysis into a workflow. Workflows usually contain the following elements:
+
+- A recipe: used to preprocess data
+- A model: model specification
+- A fit: Fitting model to preprocessed data
+
+Tidymodels makes tuning and cross validting models *much* easier than it was in 
+past iterations, such as `caret`
+
+[More about tidymodels here](https://www.tidymodels.org/)
+
+## Feature Engineering
+"Wrangling" before preprocessing
+
+- Dropping all non "rate" variables
+- Dropping id variables
+
+```{r,eval=FALSE,echo=TRUE}
+cb_df<-
+  cb_df%>%
+  select(!contains("num"))%>% # Count
+  select(!contains("_n"))%>% #count
+  select(!contains("count"))%>% # I am the count ah ah ah....
+  select(!contains("sd"))%>% #standar deviation
+  select(!contains("earn"))%>% #overalignment with outcome
+  select(!contains("den"))%>% # denominator, again
+  select(!contains("url"))%>% # url
+  select(!matches("^(cip\\d{2})"))%>% ## cip codes from scorecard
+  select(-st_fips)%>% # duplicate var
+  select(-c(latitude,longitude))%>% #id var
+  select(-accredagency)%>% #duplicate
+  select(-unitid)%>% #duplcicate id
+  select(-fedschcd) #duplicate id
+```
+
+
+## Feature Engineering
+
+"Wrangling" before preprocessing
+
+- Dropping variables with extensive missing data
+
+
+```{r,eval=FALSE,echo=TRUE}
+
+prop_miss<-.25
+
+keep_names<-
+  cb_df%>%
+  summarise_all(prop_na)%>%
+  select(which(.<prop_miss))%>%
+  names()
+
+cb_df<-cb_df%>%
+  select(all_of(keep_names))
+
+
+```
+
+## Feature Engineering
+
+"Wrangling" before preprocessing
+
+- Recoding any variable with less than 100 distinct values as a factor
+
+
+```{r,eval=FALSE,echo=TRUE}
+## Min and max values
+n_unique_min<-100
+n_unique_max<-length(unique(cb_df$opeid6))
+
+cb_df<-cb_df%>%
+  mutate_if( ~ (n_distinct(.) < n_unique_min), as.factor)%>% ## recode few distinct as factors
+  group_by(opeid6)%>%  ##
+  select_if((~(n_distinct(.)!=n_unique_max)))%>% ## drop replicate id vars
+  ungroup()
+```
+
+
+## Feature Engineering: 
+
+Preprocesing steps:
+
+- Drop missing data: `step_naomit`
+- Recode rare categories to other: `step_other`
+- Recode categorical to binary: `step_dummy`
+- Drop zero variance/near zero variance predictors: `step_zv`, `step_nzv`
+- Drop any highly correlated predictors (threshold r>.95) : `step_corr`
+
+
+```{r,eval=FALSE,echo=TRUE}
+## Pre-processing via recipe
+earn_recipe<-recipe(cb_df,earn_formula) %>%
+  update_role(opeid6,new_role="id variable")%>%
+  update_role(-opeid6,new_role="predictor")%>%
+  update_role(earn_mdn_hi_1yr,new_role="outcome")%>%
+  step_naomit(all_predictors())%>%
+  step_other(all_nominal_predictors(),threshold = .005)%>%
+  step_dummy(all_nominal_predictors())%>%
+  step_zv(all_predictors(),skip=TRUE) %>%
+  step_nzv(all_numeric_predictors(),skip=TRUE)%>%
+  step_normalize(all_numeric_predictors())%>%
+  step_corr(all_numeric_predictors(),skip=TRUE,threshold = .95)
+```
+
+Results in a dataset with 27,000 observations, 514 predictors, one id variable, one dependent variable. 
+
+
+## Cross Validation
+
+I use kfold cross validation, with 20 distinct folds. Model is trained on 95 percent of the data and tested against
+5 percent of the data, with the rmse calculated from the testing dataset each time. 
+
+```{r,eval=FALSE,echo=TRUE}
+cb_rs<-vfold_cv(cb_df,v = 20)
+```
+
+
+## Model Selection
+
+-- Linear Model with Elastic Net Regularization
+
+Elastic net is a combination of the lasso penalty, which drops some subset of highly correlated predictors, and the ridge penalty, which shrinks coefficients of correlated penalties toward one another
+
+-- Two "hyperparameters:"  penalty and mixture
+
+![](lasso.png)
+
+Source: Hasite, Qian, Tay (2021) [Introduction to glmnet](https://glmnet.stanford.edu/articles/glmnet.html)
+
+## Elastic net model specification
+```{r,eval=FALSE,echo=TRUE}
+## Create empty workflow
+earn_wf<-workflow()
+
+## Add recipe
+earn_wf<-earn_wf%>%
+  add_recipe(earn_recipe)
+
+## Add enet model
+enet_fit<-
+  linear_reg(penalty=tune(),
+             mixture=tune()) %>%
+  set_engine("glmnet")
+
+## Set tuning grid
+enet_grid<-expand_grid(penalty=seq(0,1,by=.333),
+                       mixture=seq(0.05,1,by=.45))
+
+## Add model to workflow
+earn_wf<-earn_wf%>%
+  add_model(enet_fit)
+
+## Fit model to resampled data, tune hyperparameters
+earn_wf_fit<-
+  tune_grid(
+    earn_wf,
+    resamples=cb_rs, ##resampling plan
+    grid=enet_grid # tuning grid
+  )
+```
+
+
+## Random Forest Regression
+
+Random forest is an extension of a tree-based approach, which uses random subsets of cases and variables to "vote" on the likely outcome for a given covariate. It's not restrained by linearity.
+
+![](rand_forest.png)
+
+Source: Hastie, Tibshirani, Friedman (2007) Elements of Statistical Learning, p. 588
+
+## Random Forest Regression
+
+Two hyperparameters: minimum n before closing a tree, number of variables to try
+
+```{r,eval=FALSE,echo=TRUE}
+earn_prep<-prep(earn_recipe)
+## Next model: random forest
+
+tune_spec <- rand_forest(
+  mtry = tune(),
+  trees = 1000,
+  min_n = tune()
+) %>%
+  set_mode("regression") %>%
+  set_engine("ranger")
+
+tune_wf <- workflow() %>%
+  add_recipe(earn_recipe) %>%
+  add_model(tune_spec)
+
+doParallel::registerDoParallel()
+
+tune_res <- tune_grid(
+  tune_wf,
+  resamples = cb_rs,
+  grid = 20
+)
+```
+
+
+
+## Elastic Net: Model Tuning
+
+```{r}
+load("enet_fit.Rdata")
+
+gg
+```
+
+
+## Elastic Net: Estimates
+
+```{r}
+load("enet_vi.Rdata")
+
+gg
+```
+
+
+## Elastic Net: Model fit and conclusions
+
+- Expected results: school type, degree type
+
+- Unexpected results: Overall debt repayment rates, "carried" debt are clear predictors
+
+
+## Random Forest: Model Tuning
+
+```{r}
+load("rf_fit.Rdata")
+
+gg
+```
+
+
+
+## Random Forest: Variable importance
+
+```{r}
+load("rf_vi.Rdata")
+
+gg
+```
+
+
+## Random Forest: Model fit and conclusions
+
+-- Expected: Institution and degree type
+
+-- Unexpected: Cohort default rates, satisfactory academic progress rates
+
+Overall model fit is slightly better, but not substantively improved. 
+
+## Takeaways
+
+-- Overall model accuracy remains low: RMSE ~$10,000
+
+-- Novel features are highlighted: things I didn't expect and might be worth exploring further
+
+-- Predictions could be of use in recommendation algorithms: set a min and max salary, add in other
+considerations, here's the type of program that could be considered
+
+-- Cross validation and model fit based on accuracy should be more widely used
+
+-- "Hybrid" Approaches: random propensity forests 
+
+
+

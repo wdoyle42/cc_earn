@@ -51,7 +51,57 @@ earn_wf<-earn_wf%>%
   add_model(enet_fit)
 
 
+## Model fit
+gg<-earn_wf_fit%>%
+  unnest(.metrics)%>%
+  filter(.metric=="rmse")%>%
+  mutate(tune_id=paste0("penalty=",prettyNum(penalty),
+                        ", mixture=",prettyNum(mixture))) %>%
+  select(tune_id,.estimate)%>%
+  rename(RMSE=.estimate)%>%
+  ggplot(aes(x=RMSE,color=tune_id,fill=tune_id))+
+  geom_density(alpha=.1)+
+  scale_x_continuous(labels=dollar_format())
 
+save(gg,file = "enet_fit.Rdata")
 
 ## Variable Chart
+
+lowest_rmse <- earn_wf_fit %>%
+  select_best("rmse")
+
+final_wf <- finalize_workflow(
+ earn_wf,
+  lowest_rmse
+)
+
+final_fit<-final_wf%>%
+  fit(cb_df)
+
+final_rmse<-earn_wf_fit%>%
+  select_best(metric = "rmse")
+
+final_enet<- finalize_workflow(
+    earn_wf,
+    lowest_rmse
+  )
+
+final_enet<-final_enet%>%
+fit(cb_df)
+
+
+vi_final<-final_enet%>%extract_fit_parsnip()%>%vi(scale=TRUE)
+
+gg<-vi_final%>%
+  slice(1:25)%>%
+  ggplot(aes(y=Importance,x=fct_reorder(Variable,.x=Importance),fill=Sign))+
+  geom_col()+
+  coord_flip()+
+  theme(legend.position="bottom")+
+  xlab("")+
+  ylab("")
+
+save(gg,file="enet_vi.Rdata")
+
+
 

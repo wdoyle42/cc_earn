@@ -63,7 +63,8 @@ enet_grid<-expand_grid(penalty=seq(0,1,by=.333),
 earn_wf<-earn_wf%>%
   add_model(enet_fit)
 
-##
+doParallel::registerDoParallel()
+
 earn_wf_fit<-
   tune_grid(
     earn_wf,

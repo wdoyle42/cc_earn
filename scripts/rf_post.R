@@ -1,7 +1,5 @@
 # Random forest postestimation
 
-
-
 load("tune_res.Rdata")
 
 tune_res%>%
@@ -17,3 +15,12 @@ tune_res%>%
   facet_wrap(~parameter, scales = "free_x") +
   labs(x = NULL, y = "RMSE")
 
+
+## use vi instead, then plot
+
+vi_final_rf %>%
+  slice(1:25) %>%
+  ggplot(aes(x = Importance,
+             y = fct_reorder(as_factor(Variable),
+                             .x = Importance))) +
+  geom_point()
