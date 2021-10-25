@@ -23,7 +23,6 @@ cb_df<-read_rds(here("data","cleaned","cb_df.Rds"))
 ```
 
 
-
 ## First Year Earnings of Bachelor's Degree Holders
 ```{r}
 cb_df%>%
@@ -96,7 +95,6 @@ cb_df%>%
 ```
 
 
-
 ## The Two Worlds of Current Applied Data Analysis
   - Theory driven: testing hypotheses about a specific population parameter
   
@@ -135,9 +133,7 @@ My goal is to take the second approach as a contrast to the standard approach I 
 
 ML focuses on accuracy of the model: rmse for continuous outcomes, sensitivity/specificity/AUC for classification. Measures are calculated using cross-validation, many times with a final held out testing dataset.
 
-## The Data
-
-College Scorecard Program Level Data
+## College Scorecard Program Level Data
 
 Program level earnings from 260,000 programs at accredited institutions across the United States. Includes earnings and debt level and repayment information for programs. 
 Dependent variable: Median earnings from graduates of the program after 1 year (using social security records)
@@ -152,9 +148,7 @@ pr_df<-read_csv(here("data","raw","Most-Recent-Cohorts-Field-of-Study.csv"),
   select(opeid6,creddesc,cipdesc, earn_mdn_hi_1yr) ## just id vars and earnings
 ```
 
-## The Data
-
-College Scorecard College Level Data
+## College Scorecard College Level Data
 
 Characteristics of 6,700 accredited institutions of postsecondary education across the United States. A total of 2,392 variables. 
 
@@ -166,9 +160,7 @@ cb_df<-read_csv(here("data","raw","Most-Recent-Cohorts-All-Data-Elements.csv"),
   mutate(opeid6=as.character(opeid6))
 ```
 
-## The Data
-
-American Community Survey
+## American Community Survey
 
 Zip-code level data from 33,000 zip codes, matched to institution zip code. Data from the
 [American Community Survey API](https://www.census.gov/data/developers/data-sets.html), as made easy to use by [tidycensus](https://walker-data.com/tidycensus/)
@@ -187,7 +179,6 @@ educ <- get_acs(
   year = 2019
 )
 ```
-
 
 ## Workflow Approach
 
@@ -271,7 +262,7 @@ cb_df<-cb_df%>%
 ```
 
 
-## Feature Engineering: 
+## Feature Engineering
 
 Preprocesing steps:
 
@@ -319,6 +310,8 @@ Elastic net is a combination of the lasso penalty, which drops some subset of hi
 -- Two "hyperparameters:"  penalty and mixture
 
 ![](lasso.png)
+
+Ridge penalty, $||\beta||_2^2$ shrinks all coefficients towards one another, while the lasso penalty $||\beta||_1$ tends to "pick" one out of a set of highly correlated variables. The $\alpha$ parameter provides for the mixture between the two approaches, while the $\lambda$ sets the overall size of the penalty to be applied.
 
 Source: Hasite, Qian, Tay (2021) [Introduction to glmnet](https://glmnet.stanford.edu/articles/glmnet.html)
 
@@ -457,7 +450,20 @@ considerations, here's the type of program that could be considered
 
 -- Cross validation and model fit based on accuracy should be more widely used
 
+-- Tuning could be usefully applied in a wide variety of settings
+
 -- "Hybrid" Approaches: random propensity forests 
+
+
+## Resources
+
+-- Github repo: https://github.com/wdoyle42/cc_earn
+
+-- Tidyverse: https://www.tidyverse.org/
+
+-- Tidymodels: https://www.tidymodels.org/
+
+-- GLMnet: https://glmnet.stanford.edu/articles/glmnet.html
 
 
 
