@@ -28,7 +28,7 @@ n_unique<-100
 ## Load in zip code level data
 zip_data<-read_rds(here("data","cleaned","zip_data.Rds"))
 
-## Load in program level data
+## Load in program level data from https://data.ed.gov/dataset/college-scorecard-all-data-files-through-6-2020/resources
 pr_df<-read_csv(here("data","raw","Most-Recent-Cohorts-Field-of-Study.csv"),
                      na = c("PrivacySuppressed","NULL")
                 )%>%
@@ -37,7 +37,7 @@ pr_df<-read_csv(here("data","raw","Most-Recent-Cohorts-Field-of-Study.csv"),
   filter(!is.na(earn_mdn_hi_1yr))%>% ## Complete data
   select(opeid6,creddesc,cipdesc, earn_mdn_hi_1yr) ## just id vars and earnings
 
-## Load in scorecard data
+## Load in scorecard data from https://data.ed.gov/dataset/college-scorecard-all-data-files-through-6-2020/resources
 cb_df<-read_csv(here("data","raw","Most-Recent-Cohorts-All-Data-Elements.csv"),
                  na=c("PrivacySuppressed","NULL"))%>%
   clean_names(case="snake")%>%
