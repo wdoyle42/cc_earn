@@ -1,3 +1,71 @@
 # .gitignore
 
-.DS_Store
+
+# -------------
+# general
+# -------------
+
+# ignore all files starting with underscore
+_*
+
+# ignore docx
+*.docx
+
+# -------------
+# folders
+# -------------
+
+# -- /data ----
+!data/
+data/*
+!/data/README.md
+
+!/data/raw
+/data/raw/*
+!/data/raw/README.md
+
+# -------------
+# Lua
+# -------------
+*.lua
+!linebreaks.lua
+*.native
+
+# -------------
+# TeX
+# -------------
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fff
+*.fls
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*..synctex.gz
+*.toc
+*.ttt
+
+# -------------
+# R
+# -------------
+*.Rhistory
+*.Rproj
+
+# -------------
+# compiled
+# -------------
+*.o
+
+# -------------
+# MacOS
+# -------------
+*.DS_Store
+
+
