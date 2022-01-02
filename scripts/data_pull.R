@@ -26,7 +26,7 @@ prop_na<-function(x){sum(is.na(x))/length(x)}
 n_unique<-100
 
 ## Load in zip code level data
-zip_data<-read_rds(here("data","cleaned","zip_data.Rds"))
+zip_data<-read_rds(here("data","cleaned","zip_data.rds"))
 
 ## Load in program level data from https://data.ed.gov/dataset/college-scorecard-all-data-files-through-6-2020/resources
 pr_df<-read_csv(here("data","raw","Most-Recent-Cohorts-Field-of-Study.csv"),
@@ -100,4 +100,4 @@ cb_df<-pr_df%>%
 
 cb_df<-cb_df%>%drop_na()
 
-write_rds(cb_df,here("data","cleaned","cb_df.Rds"))
+write_rds(cb_df,here("data","cleaned","cb_df.rds"))
