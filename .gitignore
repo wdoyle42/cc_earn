@@ -20,6 +20,10 @@ _*
 data/*
 !/data/README.md
 
+!/data/cleaned
+/data/cleaned/*
+!/data/cleaned/README.md
+
 !/data/raw
 /data/raw/*
 !/data/raw/README.md
