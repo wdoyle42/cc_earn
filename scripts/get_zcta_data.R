@@ -7,6 +7,10 @@
 libs <- c("tidyverse", "tidycensus")
 sapply(libs, require, character.only = TRUE)
 
+## paths
+dat_dir <- here::here("data")
+cln_dir <- file.path(dat_dir, "cleaned")
+
 ## set Census API key based on user
 ## NB: I would recommend placing the key in the ~/.Renviron file as
 ##
@@ -192,7 +196,7 @@ area_data <- area_data |>
 
 
 ## save data
-write_rds(area_data, file = file.path(cln_dir, "zip_data.Rds"))
+write_rds(area_data, file = file.path(cln_dir, "zip_data.rds"))
 
 ## -----------------------------------------------------------------------------
 ## END SCRIPT
