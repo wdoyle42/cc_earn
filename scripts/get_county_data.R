@@ -5,7 +5,6 @@
 library(tidyverse)
 library(tidycensus)
 library(noncensus)
-library(cwi)
 data(states)
 
 
@@ -25,6 +24,7 @@ var_list<-paste0("B15002_",c("001",
                              "034",
                              "035"))
 
+# creating educ df by county
 educ<-get_acs(geography=my_geo,
               variables=var_list,
               output="wide",
@@ -45,6 +45,7 @@ educ<-educ%>%
                           b15002_035e)/b15002_001e)*100) %>%
   select(name,college_educ)
 
+#median income df by county
 var_list<-paste0("B19013_",c("001"))
 
 income<-get_acs(my_geo,
@@ -52,84 +53,41 @@ income<-get_acs(my_geo,
                 output="wide",
                 year=2019)
 
-var_list<-paste0("B27001_",c("001",
-                             "004",
-                             "007",
-                             "010",
-                             "013",
-                             "016",
-                             "019",
-                             "022",
-                             "025",
-                             "028",
-                             "032",
-                             "035",
-                             "038",
-                             "041",
-                             "044",
-                             "047",
-                             "041",
-                             "050",
-                             "053",
-                             "056"                                                                             ))
-health<-get_acs(my_geo,
-                variables=var_list,
-                output="wide",
-                year=2019
-)
-names(health)<-tolower(names(health))
-health<-health%>%
-  mutate(insured_num=rowSums(.[4:dim(health)[2]]))%>%
-  mutate(perc_insured=(insured_num/b27001_001e)*100)%>%
-  select(name,perc_insured)
-var_list<-paste0("B23025_",c("001",
-                             "002"))
+#will use later functions as templates for remaining variables
 
-labor<-get_acs(my_geo,
-               variables=var_list,
-               output="wide",
-               year=2019
-)
-names(labor)<-tolower(names(labor))
-labor<-labor %>%
-  group_by(name)%>%
-  mutate(
-    perc_in_labor_force = (
-      b23025_002e / b23025_001e)*100
-  )%>%
-  select(name,perc_in_labor_force)
-var_list<-paste0("B07003_",c("001","013" ))
-mobility<-get_acs(my_geo,
-                  variables=var_list,
-                  output="wide",
-                  year=2019
-)
-names(mobility)<-tolower(names(mobility))
-mobility<-mobility%>%
-  group_by(name)%>%
-  mutate(perc_moved_in=(b07003_013e/b07003_001e)*100)%>%
-  select(name,perc_moved_in)
-var_list<-paste0("B08134_",c("001","007","008","009","010"))
-commute<-get_acs(my_geo,
-                 variables=var_list,
-                 output="wide",
-                 year=2019)
-names(commute)<-tolower(names(commute))
-commute<-commute%>%
-  mutate(commute_num=rowSums(.[4:dim(commute)[2]]))%>%
-  mutate(perc_commute_30p=(commute_num/b08134_001e)*100)%>%
-  select(name,perc_commute_30p)
-var_list<-paste0("B25008_",c("001","002"))
-homeown<-get_acs(my_geo,
-                 variables=var_list,
-                 output="wide",
-                 year=2019
-)
-names(homeown)<-tolower(names(homeown))
-homeown<-
-  homeown%>%
-  mutate(perc_homeown=(b25008_002e/ b25008_001e)*100)%>%
-  select(name,perc_homeown)
+#labor<-get_acs(my_geo,
+               #variables=var_list,
+              # output="wide",
+              # year=2019)
+
+#names(labor)<-tolower(names(labor))
+#labor<-labor %>%
+ # group_by(name)%>%
+ # mutate(
+ #   perc_in_labor_force = (
+ #     b23025_002e / b23025_001e)*100
+ # )%>%
+#  select(name,perc_in_labor_force)
+#var_list<-paste0("B07003_",c("001","013" ))
+#mobility<-get_acs(my_geo,
+                  #variables=var_list,
+                 # output="wide",
+                #  year=2019)
+
+
+#var_list<-paste0("B25008_",c("001","002"))
+
+#homeown<-get_acs(my_geo,
+           #      variables=var_list,
+          #       output="wide",
+          #       year=2019)
+
+#vnames(homeown)<-tolower(names(homeown))
+
+#homeown<-
+ # homeown%>%
+#  mutate(perc_homeown=(b25008_002e/ b25008_001e)*100)%>%
+#  select(name,perc_homeown)
 
 
 
