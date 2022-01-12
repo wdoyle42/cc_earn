@@ -8,8 +8,9 @@ library(noncensus)
 library(cwi)
 data(states)
 
+
 ## pull/wrangle data
-my_acs_key<-readLines("~/Desktop/projects/csc/my_acs_key",warn = FALSE)
+my_acs_key<-readLines("./my_acs_key",warn = FALSE)
 acs_key<-my_acs_key
 census_api_key(acs_key)
 my_geo<-"county"
@@ -29,6 +30,8 @@ educ<-get_acs(geography=my_geo,
               output="wide",
               year = 2019)
 
+names(educ)[names(educ)=='GEOID'] <- 'County ID (FIPS)'
+
 names(educ)<-tolower(names(educ))
 educ<-educ%>%
   group_by(name)%>%
@@ -41,31 +44,14 @@ educ<-educ%>%
                           b15002_034e+
                           b15002_035e)/b15002_001e)*100) %>%
   select(name,college_educ)
-var_list<-paste0("B19001_",c("001",
-                             "013",
-                             "014",
-                             "015",
-                             "016",
-                             "017"
-))
+
+var_list<-paste0("B19013_",c("001"))
+
 income<-get_acs(my_geo,
                 variables=var_list,
                 output="wide",
-                year=2019
-)
-names(income)<-tolower(names(income))
-income<-income%>%
-  group_by(name)%>%
-  mutate(
-    income_75 = ((
-      b19001_013e +
-        b19001_014e +
-        b19001_015e +
-        b19001_016e +
-        b19001_017e 
-    ) / b19001_001e)*100
-  )%>%
-  select(name,geoid,income_75)
+                year=2019)
+
 var_list<-paste0("B27001_",c("001",
                              "004",
                              "007",
