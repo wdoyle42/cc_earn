@@ -1,10 +1,11 @@
 # CC Earn Data
 ## Olivia Morales
-## 2022-1-10
+## 2022-1-12
 
 library(tidyverse)
 library(tidycensus)
 library(noncensus)
+library(devtools)
 data(states)
 
 
@@ -53,41 +54,83 @@ income<-get_acs(my_geo,
                 output="wide",
                 year=2019)
 
-#will use later functions as templates for remaining variables
+names(income) <- tolower(names(income))
+income = subset(income, select = -c(b19013_001m, geoid))
 
-#labor<-get_acs(my_geo,
-               #variables=var_list,
-              # output="wide",
-              # year=2019)
+names(income)[names(income)=='b19013_001e'] <- 'median income'
 
-#names(labor)<-tolower(names(labor))
-#labor<-labor %>%
- # group_by(name)%>%
- # mutate(
- #   perc_in_labor_force = (
- #     b23025_002e / b23025_001e)*100
- # )%>%
-#  select(name,perc_in_labor_force)
-#var_list<-paste0("B07003_",c("001","013" ))
-#mobility<-get_acs(my_geo,
-                  #variables=var_list,
-                 # output="wide",
-                #  year=2019)
+#labor force participation df by county
 
 
-#var_list<-paste0("B25008_",c("001","002"))
+var_list<-paste0("B23025_",c("001", "002"))
 
-#homeown<-get_acs(my_geo,
-           #      variables=var_list,
-          #       output="wide",
-          #       year=2019)
+labor<-get_acs(my_geo,
+               variables=var_list,
+               output="wide",
+               year=2019)
+                                      
+names(labor)<-tolower(names(labor))
+labor<-labor %>%
+    group_by(name)%>%
+    mutate(perc_in_labor_force = (b23025_002e/b23025_001e) *100) %>%
+    select(name,perc_in_labor_force)
+  
 
-#vnames(homeown)<-tolower(names(homeown))
+#housing df by county
 
-#homeown<-
- # homeown%>%
-#  mutate(perc_homeown=(b25008_002e/ b25008_001e)*100)%>%
-#  select(name,perc_homeown)
+var_list<-paste0("B25008_",c("001","002"))
+
+homeown<-get_acs(my_geo,
+                  variables=var_list,
+                  output="wide",
+                  year=2019)
+
+names(homeown) <- tolower(names(homeown))
+
+homeown<-
+   homeown%>%
+   mutate(perc_homeown=(b25008_002e/ b25008_001e)*100)%>%
+   select(name,perc_homeown)
 
 
+area_data <- educ %>%
+  left_join(homeown, by = "name")
+  
+area_data <- area_data %>%
+  left_join(income, by = "name")
+  
+area_data <- area_data %>%
+  left_join(labor, by = "name")
 
+names(area_data)[names(area_data)=='college_educ'] <- '% college educated'
+names(area_data)[names(area_data)=='perc_homeown'] <- '% of homeowners'
+names(area_data)[names(area_data)=='perc_in_labor_force'] <- '% in labor force'
+
+# small area estimates by county (BLS)
+
+## One or More Series, Specifying Years 
+   payload <- list('seriesid'=c('LAUCN040010000000005','LAUCN040010000000006'), 'startyear'='2019', 'endyear'='2019') 
+   response <- blsAPI(payload) 
+   json <- fromJSON(response) 
+   
+blsAPI <- function(data=NA){ 
+       require(rjson) 
+       require(RCurl) 
+       h = basicTextGatherer() 
+       h$reset() 
+       if(is.na(data)){ 
+           message('blsAPI: No parameters specified.')} 
+       
+       else{if(is.list(data)){ 
+                 ## Multiple Series or One or More Series, Specifying Years request 
+                   curlPerform(url='https://api.bls.gov/publicAPI/v1/timeseries/data/', 
+                                                httpheader=c('Content-Type' = "application/json;"), 
+                                                postfields=toJSON(data), 
+                                                verbose = FALSE,  
+                                                writefunction = h$update)} 
+                 else{ 
+                   ## Single Series request 
+                     curlPerform(url=paste0('https://api.bls.gov/publicAPI/v1/timeseries/data/',data), 
+                                                  verbose = FALSE,  
+                                                  writefunction = h$update)}}} 
+   
