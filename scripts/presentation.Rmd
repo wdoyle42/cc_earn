@@ -1,7 +1,7 @@
 ---
 title: 'Earnings of Recent Graduates: A Machine Learning Approach'
-author: "Will Doyle"
-date: "10/24/2021"
+author: "Will Doyle and Ben Skinner"
+date: "1/19/2022"
 output: 
   slidy_presentation
 ---
@@ -133,6 +133,17 @@ My goal is to take the second approach as a contrast to the standard approach I 
 
 ML focuses on accuracy of the model: rmse for continuous outcomes, sensitivity/specificity/AUC for classification. Measures are calculated using cross-validation, many times with a final held out testing dataset.
 
+
+##  Tools That Should be Used More in Policy Analysis
+
+- Measuring model accuracy: $R^2$ and psuedo $R^2$ are default measures, but many times decisionmakers would benefit from knowing about *actual* model accuracy, which is deviance of predictions from data: RMSE for continuous outcomes, accuracy/sensitivity/specificity and AUC for classification. 
+
+- Training and Testing Datasets: policy scholars almost always calculate model fit using the training data (all of the data they have), but overfitting can be a real concern.
+
+-  Cross Validation: Related to above, cross validation is almost unheard of in policy analysis, but most analyses would benefit from cross validation of results to provide a range of estimates of accuracy.
+
+- Hyperparameter tuning: many commonly used tools in policy analysis rely on the analyst setting arbitray values: number of neighbors for K nearest neighbor, lag times for panel data, bandwidths for regression discontunity. Approaches to identifying the correct hyperparameter are ad hoc and usually in response to reviwer 2. A well-known set of tools exists for this problem. 
+
 ## College Scorecard Program Level Data
 
 Program level earnings from 260,000 programs at accredited institutions across the United States. Includes earnings and debt level and repayment information for programs. 
@@ -162,14 +173,14 @@ cb_df<-read_csv(here("data","raw","Most-Recent-Cohorts-All-Data-Elements.csv"),
 
 ## American Community Survey
 
-Zip-code level data from 33,000 zip codes, matched to institution zip code. Data from the
+County level data from 3,006 counties, matched to institution county. Data from the
 [American Community Survey API](https://www.census.gov/data/developers/data-sets.html), as made easy to use by [tidycensus](https://walker-data.com/tidycensus/)
-I include four characteristics of each zip code:
+I include four characteristics of each county:
 
 - Percent of population with at least a bachelor's degree
 - Percent of population with incomes over $75,000
 - Percent of population that owns their own home
-- Percent of population that move into the zip code in the last year. 
+- Percent of population that move into the county in the last year. 
 
 ```{r,eval=FALSE,echo=TRUE}
 educ <- get_acs(
@@ -293,8 +304,12 @@ Results in a dataset with 27,000 observations, 514 predictors, one id variable, 
 
 ## Cross Validation
 
+Training/testing: run the model on one subset of the data (traning dataset), evaluate accuracy of the model on another subset of the data (testing dataset).
+
+Cross validation: repeat the traning and testing process multiple times, using different subsets of the data. 
+
 I use kfold cross validation, with 20 distinct folds. Model is trained on 95 percent of the data and tested against
-5 percent of the data, with the rmse calculated from the testing dataset each time. 
+5 percent of the data, with the rmse calculated from the testing dataset each time. The 95/5 split is repeated without replacement, such that the 5 percent "held out" is different in every fold. 
 
 ```{r,eval=FALSE,echo=TRUE}
 cb_rs<-vfold_cv(cb_df,v = 20)
@@ -315,6 +330,15 @@ Ridge penalty, $||\beta||_2^2$ shrinks all coefficients towards one another, whi
 
 Source: Hasite, Qian, Tay (2021) [Introduction to glmnet](https://glmnet.stanford.edu/articles/glmnet.html)
 
+
+## Hyperparameter Tuning
+
+Values of $\alpha$ (mixture) and $\beta$ are set by the analyst. The only way to know if these are 
+"correct" is to empircally evaluate model fit. 
+
+
+
+
 ## Elastic net model specification
 ```{r,eval=FALSE,echo=TRUE}
 ## Create empty workflow
@@ -331,8 +355,8 @@ enet_fit<-
   set_engine("glmnet")
 
 ## Set tuning grid
-enet_grid<-expand_grid(penalty=seq(0,1,by=.333),
-                       mixture=seq(0.05,1,by=.45))
+enet_grid<-grid_max_entropy(parameters(enet_fit))
+                       
 
 ## Add model to workflow
 earn_wf<-earn_wf%>%
@@ -411,24 +435,6 @@ gg
 
 - Unexpected results: Overall debt repayment rates, "carried" debt are clear predictors
 
-
-## Random Forest: Model Tuning
-
-```{r}
-load("rf_fit.Rdata")
-
-gg
-```
-
-
-
-## Random Forest: Variable importance
-
-```{r}
-load("rf_vi.Rdata")
-
-gg
-```
 
 
 ## Random Forest: Model fit and conclusions

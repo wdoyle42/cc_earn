@@ -90,11 +90,26 @@ final_enet<-final_enet%>%
 fit(cb_df)
 
 
-vi_final<-final_enet%>%extract_fit_parsnip()%>%vi(scale=TRUE)
+vi_final<-final_enet%>%extract_fit_parsnip()%>%vip::vi(scale=TRUE)
+
+vi_final<-vi_final%>%slice(1:10)
+
+vi_final$Covariate<-c(
+"Predominant Degree Awarded: Bachelor's",
+"Degree Type: Bachelor's",
+"Undergraduate federal student loan dollar-based 1-year repayment rate borrower count",
+"Institution Level: Four Year",
+"Median Graduate Debt After 10 Years",
+"Degree Type: Certificate",
+"Total Oustanding Loan Balance",
+"Percent of Degrees in Health Programs",
+"Average Age at Entry",
+"Total Number of Direct Loan Borrowers"
+)
 
 gg<-vi_final%>%
-  slice(1:25)%>%
-  ggplot(aes(y=Importance,x=fct_reorder(Variable,.x=Importance),fill=Sign))+
+  slice(1:10)%>%
+  ggplot(aes(y=Importance,x=fct_reorder(Covariate,.x=Importance),fill=Sign))+
   geom_col()+
   coord_flip()+
   theme(legend.position="bottom")+
