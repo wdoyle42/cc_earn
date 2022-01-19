@@ -1,0 +1,8 @@
+
+.DS_Store
+scripts/.RData
+scripts/.Rhistory
+scripts/bds2019_cty.csv
+scripts/georef.txt
+scripts/laucnty19.xlsx
+scripts/my_acs_key
