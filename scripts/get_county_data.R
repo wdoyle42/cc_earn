@@ -1,11 +1,13 @@
 # CC Earn Data
 ## Olivia Morales
-## 2022-1-12
+## 2022-1-18
 
 library(tidyverse)
 library(tidycensus)
 library(noncensus)
 library(devtools)
+library(blsR)
+library(blscrapeR)
 data(states)
 
 
@@ -31,7 +33,7 @@ educ<-get_acs(geography=my_geo,
               output="wide",
               year = 2019)
 
-names(educ)[names(educ)=='GEOID'] <- 'County ID (FIPS)'
+names(educ)[names(educ)=='GEOID'] <- 'fips'
 
 names(educ)<-tolower(names(educ))
 educ<-educ%>%
@@ -44,7 +46,11 @@ educ<-educ%>%
                           b15002_033e+
                           b15002_034e+
                           b15002_035e)/b15002_001e)*100) %>%
-  select(name,college_educ)
+  select(name,college_educ,fips)
+
+county_n_fips <- subset(educ, select = -c(college_educ))
+  
+names(county_n_fips)[names(county_n_fips)=='name'] <- 'ctyname'
 
 #median income df by county
 var_list<-paste0("B19013_",c("001"))
@@ -57,10 +63,9 @@ income<-get_acs(my_geo,
 names(income) <- tolower(names(income))
 income = subset(income, select = -c(b19013_001m, geoid))
 
-names(income)[names(income)=='b19013_001e'] <- 'median income'
+names(income)[names(income)=='b19013_001e'] <- 'median_income'
 
 #labor force participation df by county
-
 
 var_list<-paste0("B23025_",c("001", "002"))
 
@@ -106,31 +111,45 @@ names(area_data)[names(area_data)=='college_educ'] <- '% college educated'
 names(area_data)[names(area_data)=='perc_homeown'] <- '% of homeowners'
 names(area_data)[names(area_data)=='perc_in_labor_force'] <- '% in labor force'
 
-# small area estimates by county (BLS)
+area_data_final <- area_data[,c(3,1,2,4,5,6)]
 
-## One or More Series, Specifying Years 
-   payload <- list('seriesid'=c('LAUCN040010000000005','LAUCN040010000000006'), 'startyear'='2019', 'endyear'='2019') 
-   response <- blsAPI(payload) 
-   json <- fromJSON(response) 
-   
-blsAPI <- function(data=NA){ 
-       require(rjson) 
-       require(RCurl) 
-       h = basicTextGatherer() 
-       h$reset() 
-       if(is.na(data)){ 
-           message('blsAPI: No parameters specified.')} 
-       
-       else{if(is.list(data)){ 
-                 ## Multiple Series or One or More Series, Specifying Years request 
-                   curlPerform(url='https://api.bls.gov/publicAPI/v1/timeseries/data/', 
-                                                httpheader=c('Content-Type' = "application/json;"), 
-                                                postfields=toJSON(data), 
-                                                verbose = FALSE,  
-                                                writefunction = h$update)} 
-                 else{ 
-                   ## Single Series request 
-                     curlPerform(url=paste0('https://api.bls.gov/publicAPI/v1/timeseries/data/',data), 
-                                                  verbose = FALSE,  
-                                                  writefunction = h$update)}}} 
-   
+# BLS data (business dynamics & employment by county)
+
+#employment/unemployment, labor force, etc. by county
+
+county_emp_data <- read_excel("./laucnty19.xlsx")
+  
+names(county_emp_data)[names(county_emp_data)=='...2'] <- 'state_fips_code'
+names(county_emp_data)[names(county_emp_data)=='...3'] <- 'county_fips_code'
+names(county_emp_data)[names(county_emp_data)=='...4'] <- 'county_name_abbrev'
+names(county_emp_data)[names(county_emp_data)=='...5'] <- 'year'
+names(county_emp_data)[names(county_emp_data)=='...7'] <- 'labor_force'
+names(county_emp_data)[names(county_emp_data)=='...8'] <- 'employed'
+names(county_emp_data)[names(county_emp_data)=='...9'] <- 'unemployment'
+names(county_emp_data)[names(county_emp_data)=='...10'] <- 'unemployment_rate %'
+
+county_emp_data <- county_emp_data[-c(1:5), ] 
+  
+county_emp_data$fips <- str_c(county_emp_data$state_fips_code, "", county_emp_data$county_fips_code)
+
+final_countyemp_data <- subset(county_emp_data, select = -c(...6, state_fips_code, county_fips_code, 1)) %>%
+  relocate(fips)
+
+#business dynamics data by county
+
+#reading in csv & txt files from BLS website
+
+cty_bds <- read.csv("./bds2019_cty.csv") 
+codes <- read.table("./georef.txt", header=TRUE, sep = ",", dec = ".")
+
+#cleaning data, merging dataframe to include fips codes, county names
+
+cty_bds_2019 <- subset(cty_bds, year == 2019)
+
+cty_bds_2019_w_codes <- merge(cty_bds_2019, codes, by=c("cty","st"))
+
+cty_bds_2019_fips <- merge(cty_bds_2019_w_codes, county_n_fips, by = c("ctyname")) 
+  
+final_bds_2019 <- subset(cty_bds_2019_fips, select = -c(cty, st)) %>%
+  relocate(fips)
+ 
