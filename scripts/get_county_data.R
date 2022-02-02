@@ -12,7 +12,7 @@ data(states)
 
 
 ## pull/wrangle data
-my_acs_key<-readLines("./my_acs_key",warn = FALSE)
+my_acs_key<-readLines("../my_acs_key",warn = FALSE)
 acs_key<-my_acs_key
 census_api_key(acs_key)
 my_geo<-"county"
@@ -111,45 +111,49 @@ names(area_data)[names(area_data)=='college_educ'] <- '% college educated'
 names(area_data)[names(area_data)=='perc_homeown'] <- '% of homeowners'
 names(area_data)[names(area_data)=='perc_in_labor_force'] <- '% in labor force'
 
-area_data_final <- area_data[,c(3,1,2,4,5,6)]
+area_data <- area_data[,c(3,1,2,4,5,6)]
 
 # BLS data (business dynamics & employment by county)
 
 #employment/unemployment, labor force, etc. by county
 
-county_emp_data <- read_excel("./laucnty19.xlsx")
+county_emp_data <- read_excel("../laucnty19.xlsx")
   
-names(county_emp_data)[names(county_emp_data)=='...2'] <- 'state_fips_code'
-names(county_emp_data)[names(county_emp_data)=='...3'] <- 'county_fips_code'
-names(county_emp_data)[names(county_emp_data)=='...4'] <- 'county_name_abbrev'
-names(county_emp_data)[names(county_emp_data)=='...5'] <- 'year'
-names(county_emp_data)[names(county_emp_data)=='...7'] <- 'labor_force'
-names(county_emp_data)[names(county_emp_data)=='...8'] <- 'employed'
-names(county_emp_data)[names(county_emp_data)=='...9'] <- 'unemployment'
-names(county_emp_data)[names(county_emp_data)=='...10'] <- 'unemployment_rate %'
+colnames(county_emp_data) <- c("laus_code", 
+                  "state_fips_code", 
+                  "county_fips_code", 
+                  "county_name_state", 
+                  "year", 
+                  "NA", 
+                  "labor_force",
+                  "employed",
+                  "unemployed",
+                  "unemployment_rate_%")
+
 
 county_emp_data <- county_emp_data[-c(1:5), ] 
   
 county_emp_data$fips <- str_c(county_emp_data$state_fips_code, "", county_emp_data$county_fips_code)
 
-final_countyemp_data <- subset(county_emp_data, select = -c(...6, state_fips_code, county_fips_code, 1)) %>%
+final_countyemp_data <- subset(county_emp_data, select = -c(6, state_fips_code, county_fips_code, 1)) %>%
   relocate(fips)
 
 #business dynamics data by county
 
 #reading in csv & txt files from BLS website
 
-cty_bds <- read.csv("./bds2019_cty.csv") 
-codes <- read.table("./georef.txt", header=TRUE, sep = ",", dec = ".")
+cty_bds <- read.csv("../bds2019_cty.csv") 
+codes <- read.delim("../county_fips_master.txt", header=TRUE, sep = ",") 
+codes <- rename(codes, cty = county, st = state)
 
 #cleaning data, merging dataframe to include fips codes, county names
 
 cty_bds_2019 <- subset(cty_bds, year == 2019)
-
 cty_bds_2019_w_codes <- merge(cty_bds_2019, codes, by=c("cty","st"))
-
-cty_bds_2019_fips <- merge(cty_bds_2019_w_codes, county_n_fips, by = c("ctyname")) 
-  
-final_bds_2019 <- subset(cty_bds_2019_fips, select = -c(cty, st)) %>%
+final_bds_2019 <- subset(cty_bds_2019_w_codes, select = -c(cty, st)) %>%
+  mutate(fips = ifelse(nchar(as.integer(fips)) < 5, paste0("0", fips), fips)) %>%
   relocate(fips)
+
+
+
  
