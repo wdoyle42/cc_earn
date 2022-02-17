@@ -1,0 +1,74 @@
+---
+title: "var_list"
+author: Olivia Morales
+output: pdf_document
+---
+
+```{r setup, echo=F, include=F, message=F, warning=F, error=F}
+
+library(knitr)
+library(tidyverse)
+library(haven)
+
+opts_chunk$set(error = FALSE,
+               echo = FALSE,
+               include = FALSE,
+               message = FALSE,
+               warning = FALSE,
+               out.width = "75%",          # figures should be as wide as margins
+               comment = NA)      
+```
+
+# Dataset created from 2019 ACS Community Survey data (county level)
+
+&nbsp; | Name of Variable | Description
+-------|----------------  |--------------------------------------
+&nbsp; | fips             | Five-digit Federal Information Processing Standards code which uniquely identified counties and county equivalents in the United States, certain U.S. possessions, and certain freely associated states.
+&nbsp; | % college educ.  | Sums all relevant college-going variables (bachelors, masters and professional/doctorate degree attainment) for males and females, dividing them by variable total
+&nbsp; | % homeowners     | Captures owner occupied housing counts, dividing by variable total
+&nbsp; | median income    | median household income in the past 12 months (2019 inflation-adjusted dollars)
+&nbsp; | % in labor force | Captures labor force participation counts, dividing by variable total 
+
+# Dataset from Bureau of Labor Statistics, Local Area Unemployment Statistics (county level)
+## Descriptions from [BLS.gov](https://www.bls.gov/lau/laufaq.htm#Q01)
+
+&nbsp; | Name of Variable | Description
+-------|----------------  |--------------------------------------
+&nbsp; | fips             | Five-digit Federal Information Processing Standards code which uniquely identified counties and county equivalents in the United States, certain U.S. possessions, and certain freely associated states.
+&nbsp; | labor_force      | Included are all persons in the civilian noninstitutional population ages 16 and older classified as either employed or unemployed. 
+&nbsp; | employed         | These are all persons who, during the reference week (the week including the 12th day of the month), (a) did any work as paid employees, worked in their own business or profession or on their own farm, or worked 15 hours or more as unpaid workers in an enterprise operated by a member of their family, or (b) were not working but who had jobs from which they were temporarily absent because of vacation, illness, bad weather, childcare problems, maternity or paternity leave, labor-management dispute, job training, or other family or personal reasons, whether or not they were paid for the time off or were seeking other jobs. Each employed person is counted only once, even if he or she holds more than one job.
+&nbsp; | unemployed       | Included are all persons who had no employment during the reference week, were available for work, except for temporary illness, and had made specific efforts to find employment some time during the 4 week-period ending with the reference week. Persons who were waiting to be recalled to a job from which they had been laid off need not have been looking for work to be classified as unemployed.
+&nbsp; | unemployment rate | The unemployed percent of the civilian labor force [i.e., 100 times (unemployed/civilian labor force)].
+
+# Dataset from Bureau of Labor Statistics, Business Dynamics Statistics (county level)
+## Descriptions from variable list available at [census.gov](https://www.census.gov/content/dam/Census/programs-surveys/business-dynamics-statistics/codebook-glossary.pdf)
+
+&nbsp; | Name of Variable         | Description
+-------|----------------          |--------------------------------------
+&nbsp; | fips                     | Five-digit Federal Information Processing Standards code which uniquely identified counties and county equivalents in the United States, certain U.S. possessions, and certain freely associated states.
+&nbsp; | firms                    | A simple count of the number of firms in the cell.
+&nbsp; | estabs                   | A simple count of the number of establishments in the cell.
+&nbsp; | emp                      | Paid employment consists of full- and part-time employees, including salaried officers and executives of corporations, who are on the payroll in the pay period including March 12. Included are employees on paid sick leave, holidays, and vacations.
+&nbsp; | denom                    | Davis-Haltiwanger-Schuh (DHS) denominator. For time t, denom is the average of employment for times t and t-1. This variable attempts to prevent transitory shocks from creating a bias to the relationship between net growth from t-1 to t and size.
+&nbsp; | estabs_entry             | A count of establishments born within the cell during the last 12 months.
+&nbsp; | estabs_entry_rate        | 100 * (estabs_entry at time t divided by the average of estabs at t and t-1).
+&nbsp; | estabs_exit              | A count of establishments exiting from within the cell during the last 12 months.
+&nbsp; | estabs_exit_rate         | 100 * (estabs_exit at time t divided by the average of estabs at t and t-1).
+&nbsp; | job_creation             | Count of all employment gains within the cell from expanding and opening establishments between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_births      | Count of employment gains within the cell from establishment openings (births) between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_continuers  | Count of employment gains within the cell from continuing establishments that expanded between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation             | Count of all employment gains within the cell from expanding and opening establishments between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_rate_births | 100 * (job_creation_births / denom)
+&nbsp; | job_creation_rate        | 100 * (job_creation / denom)
+&nbsp; | job_destruction          | Count of all employment losses within the cell from contracting and closing establishments between the week of March 12 of the prior year to the current year.
+&nbsp; | job_destruction_deaths   | Count of all employment losses within the cell from establishment closings (deaths) between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_continuers  | Count of employment losses within the cell from continuing establishments that contracted between the week of March 12 of the prior year to the current year.
+&nbsp; | job_destruction_rate_deaths | 100 * (job_destruction_deaths / denom)
+&nbsp; | job_destruction_rate        | 100 * (job_destruction divided / denom)
+&nbsp; | net_job_creation            | job_creation - job_destruction
+&nbsp; | net_job_creation_rate       | job_creation_rate - job_destruction_rate
+&nbsp; | reallocation_rate           | job_creation_rate + job_destruction_rate - abs(net_job_creation_rate). This is often referred to as an “excess” reallocation rate since it measures the rate of job reallocation over and above that needed to accommodate the net job creation in the cell. A gross reallocation measure is simply the sum of the job_creation_rate and the job destruction_rate.
+&nbsp; | firmdeath_firms             | Count of firms that have exited in their entirety during the period. All establishments owned by the firm must exit to be considered a firm death. This definition of firm death is narrow and strictly applied, so that a firm with 100 establishments would not qualify as a firm death if 99 exited while 1 continued under different ownership. Note firm legal entities that cease to exist because of merger and acquisition activity are not classified as firm deaths in the BDS data.
+&nbsp; | firmdeath_estabs            | Count of establishments associated with firm deaths.
+&nbsp; | firmdeath_emp               | Count of employment associated with firm deaths.
+

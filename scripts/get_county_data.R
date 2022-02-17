@@ -1,6 +1,6 @@
 # CC Earn Data
 ## Olivia Morales
-## 2022-1-18
+## 2022-2-3
 
 library(tidyverse)
 library(tidycensus)
@@ -8,11 +8,12 @@ library(noncensus)
 library(devtools)
 library(blsR)
 library(blscrapeR)
+library(readxl)
 data(states)
 
 
 ## pull/wrangle data
-my_acs_key<-readLines("../my_acs_key",warn = FALSE)
+my_acs_key<-readLines("./my_acs_key",warn = FALSE)
 acs_key<-my_acs_key
 census_api_key(acs_key)
 my_geo<-"county"
@@ -46,11 +47,9 @@ educ<-educ%>%
                           b15002_033e+
                           b15002_034e+
                           b15002_035e)/b15002_001e)*100) %>%
-  select(name,college_educ,fips)
+  select(name,college_educ,fips) %>%
+  ungroup()
 
-county_n_fips <- subset(educ, select = -c(college_educ))
-  
-names(county_n_fips)[names(county_n_fips)=='name'] <- 'ctyname'
 
 #median income df by county
 var_list<-paste0("B19013_",c("001"))
@@ -78,7 +77,9 @@ names(labor)<-tolower(names(labor))
 labor<-labor %>%
     group_by(name)%>%
     mutate(perc_in_labor_force = (b23025_002e/b23025_001e) *100) %>%
-    select(name,perc_in_labor_force)
+    select(name,perc_in_labor_force) %>%
+  ungroup()
+
   
 
 #housing df by county
@@ -110,14 +111,16 @@ area_data <- area_data %>%
 names(area_data)[names(area_data)=='college_educ'] <- '% college educated'
 names(area_data)[names(area_data)=='perc_homeown'] <- '% of homeowners'
 names(area_data)[names(area_data)=='perc_in_labor_force'] <- '% in labor force'
+  
+area_data <- area_data %>% select(-name)
 
-area_data <- area_data[,c(3,1,2,4,5,6)]
+area_data <- area_data[,c(2,1,3,4,5)]
 
 # BLS data (business dynamics & employment by county)
 
 #employment/unemployment, labor force, etc. by county
 
-county_emp_data <- read_excel("../laucnty19.xlsx")
+county_emp_data <- read_excel("./laucnty19.xlsx")
   
 colnames(county_emp_data) <- c("laus_code", 
                   "state_fips_code", 
@@ -128,22 +131,22 @@ colnames(county_emp_data) <- c("laus_code",
                   "labor_force",
                   "employed",
                   "unemployed",
-                  "unemployment_rate_%")
+                  "unemployment_rate")
 
 
 county_emp_data <- county_emp_data[-c(1:5), ] 
   
 county_emp_data$fips <- str_c(county_emp_data$state_fips_code, "", county_emp_data$county_fips_code)
 
-final_countyemp_data <- subset(county_emp_data, select = -c(6, state_fips_code, county_fips_code, 1)) %>%
+final_countyemp_data <- subset(county_emp_data, select = -c(6, state_fips_code, county_fips_code, county_name_state, year, 1)) %>%
   relocate(fips)
 
 #business dynamics data by county
 
 #reading in csv & txt files from BLS website
 
-cty_bds <- read.csv("../bds2019_cty.csv") 
-codes <- read.delim("../county_fips_master.txt", header=TRUE, sep = ",") 
+cty_bds <- read.csv("./bds2019_cty.csv") 
+codes <- read.delim("./county_fips_master.txt", header=TRUE, sep = ",") 
 codes <- rename(codes, cty = county, st = state)
 
 #cleaning data, merging dataframe to include fips codes, county names
@@ -152,8 +155,11 @@ cty_bds_2019 <- subset(cty_bds, year == 2019)
 cty_bds_2019_w_codes <- merge(cty_bds_2019, codes, by=c("cty","st"))
 final_bds_2019 <- subset(cty_bds_2019_w_codes, select = -c(cty, st)) %>%
   mutate(fips = ifelse(nchar(as.integer(fips)) < 5, paste0("0", fips), fips)) %>%
+  select(-c(year, state_name)) %>%
   relocate(fips)
 
+main_bds_data <- final_bds_2019[,c(1:25)]
+xtra_county_data <- final_bds_2019[,c(26:34)]
 
-
+writeLines(names(final_bds_2019))
  
