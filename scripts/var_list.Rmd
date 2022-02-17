@@ -1,5 +1,5 @@
 ---
-title: "var_list"
+title: "Variable List for ACS, LAUS & BDS Data"
 author: Olivia Morales
 output: pdf_document
 ---
