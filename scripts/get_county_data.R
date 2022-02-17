@@ -11,9 +11,11 @@ library(blscrapeR)
 library(readxl)
 data(states)
 
+data_directory_path <- file.path("../..", "cc_earn_data")
 
 ## pull/wrangle data
-my_acs_key<-readLines("./my_acs_key",warn = FALSE)
+
+my_acs_key<-readLines(file.path(data_directory_path, "my_acs_key"))
 acs_key<-my_acs_key
 census_api_key(acs_key)
 my_geo<-"county"
@@ -120,7 +122,7 @@ area_data <- area_data[,c(2,1,3,4,5)]
 
 #employment/unemployment, labor force, etc. by county
 
-county_emp_data <- read_excel("./laucnty19.xlsx")
+county_emp_data <- read_excel(file.path(data_directory_path, "laucnty19.xlsx"))
   
 colnames(county_emp_data) <- c("laus_code", 
                   "state_fips_code", 
@@ -145,8 +147,8 @@ final_countyemp_data <- subset(county_emp_data, select = -c(6, state_fips_code, 
 
 #reading in csv & txt files from BLS website
 
-cty_bds <- read.csv("./bds2019_cty.csv") 
-codes <- read.delim("./county_fips_master.txt", header=TRUE, sep = ",") 
+cty_bds <- read.csv(file.path(data_directory_path, "bds2019_cty.csv")) 
+codes <- read.delim(file.path(data_directory_path, "county_fips_master.txt"), header=TRUE, sep = ",")
 codes <- rename(codes, cty = county, st = state)
 
 #cleaning data, merging dataframe to include fips codes, county names
