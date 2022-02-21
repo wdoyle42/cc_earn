@@ -2,6 +2,7 @@
 title: "Variable List for ACS, LAUS & BDS Data"
 author: Olivia Morales
 output: pdf_document
+fontsize: 14pt
 ---
 
 ```{r setup, echo=F, include=F, message=F, warning=F, error=F}
@@ -15,7 +16,7 @@ opts_chunk$set(error = FALSE,
                include = FALSE,
                message = FALSE,
                warning = FALSE,
-               out.width = "75%",          # figures should be as wide as margins
+               out.width = "100%",          # figures should be as wide as margins
                comment = NA)      
 ```
 
@@ -43,27 +44,27 @@ opts_chunk$set(error = FALSE,
 # Dataset from Bureau of Labor Statistics, Business Dynamics Statistics (county level)
 ## Descriptions from variable list available at [census.gov](https://www.census.gov/content/dam/Census/programs-surveys/business-dynamics-statistics/codebook-glossary.pdf)
 
-&nbsp; | Name of Variable         | Description
--------|----------------          |--------------------------------------
-&nbsp; | fips                     | Five-digit Federal Information Processing Standards code which uniquely identified counties and county equivalents in the United States, certain U.S. possessions, and certain freely associated states.
-&nbsp; | firms                    | A simple count of the number of firms in the cell.
-&nbsp; | estabs                   | A simple count of the number of establishments in the cell.
-&nbsp; | emp                      | Paid employment consists of full- and part-time employees, including salaried officers and executives of corporations, who are on the payroll in the pay period including March 12. Included are employees on paid sick leave, holidays, and vacations.
-&nbsp; | denom                    | Davis-Haltiwanger-Schuh (DHS) denominator. For time t, denom is the average of employment for times t and t-1. This variable attempts to prevent transitory shocks from creating a bias to the relationship between net growth from t-1 to t and size.
-&nbsp; | estabs_entry             | A count of establishments born within the cell during the last 12 months.
-&nbsp; | estabs_entry_rate        | 100 * (estabs_entry at time t divided by the average of estabs at t and t-1).
-&nbsp; | estabs_exit              | A count of establishments exiting from within the cell during the last 12 months.
-&nbsp; | estabs_exit_rate         | 100 * (estabs_exit at time t divided by the average of estabs at t and t-1).
-&nbsp; | job_creation             | Count of all employment gains within the cell from expanding and opening establishments between the week of March 12 of the prior year to the current year.
-&nbsp; | job_creation_births      | Count of employment gains within the cell from establishment openings (births) between the week of March 12 of the prior year to the current year.
-&nbsp; | job_creation_continuers  | Count of employment gains within the cell from continuing establishments that expanded between the week of March 12 of the prior year to the current year.
-&nbsp; | job_creation             | Count of all employment gains within the cell from expanding and opening establishments between the week of March 12 of the prior year to the current year.
-&nbsp; | job_creation_rate_births | 100 * (job_creation_births / denom)
-&nbsp; | job_creation_rate        | 100 * (job_creation / denom)
-&nbsp; | job_destruction          | Count of all employment losses within the cell from contracting and closing establishments between the week of March 12 of the prior year to the current year.
-&nbsp; | job_destruction_deaths   | Count of all employment losses within the cell from establishment closings (deaths) between the week of March 12 of the prior year to the current year.
-&nbsp; | job_creation_continuers  | Count of employment losses within the cell from continuing establishments that contracted between the week of March 12 of the prior year to the current year.
-&nbsp; | job_destruction_rate_deaths | 100 * (job_destruction_deaths / denom)
+&nbsp; | Name of Variable            | Description
+-------|----------------             |--------------------------------------
+&nbsp; | fips                        | Five-digit Federal Information Processing Standards code which uniquely identified counties and county equivalents in the United States, certain U.S. possessions, and certain freely associated states.
+&nbsp; | firms                       | A simple count of the number of firms in the cell.
+&nbsp; | estabs                      | A simple count of the number of establishments in the cell.
+&nbsp; | emp                         | Paid employment consists of full- and part-time employees, including salaried officers and executives of corporations, who are on the payroll in the pay period including March 12. Included are employees on paid sick leave, holidays, and vacations.
+&nbsp; | denom                       | Davis-Haltiwanger-Schuh (DHS) denominator. For time t, denom is the average of employment for times t and t-1. This variable attempts to prevent transitory shocks from creating a bias to the relationship between net growth from t-1 to t and size.
+&nbsp; | estabs_entry                | A count of establishments born within the cell during the last 12 months.
+&nbsp; | estabs_entry_rate           | 100 * (estabs_entry at time t divided by the average of estabs at t and t-1).
+&nbsp; | estabs_exit                 | A count of establishments exiting from within the cell during the last 12 months.
+&nbsp; | estabs_exit_rate            | 100 * (estabs_exit at time t divided by the average of estabs at t and t-1).
+&nbsp; | job_creation                | Count of all employment gains within the cell from expanding and opening establishments between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_births         | Count of employment gains within the cell from establishment openings (births) between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_continuers     | Count of employment gains within the cell from continuing establishments that expanded between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation                | Count of all employment gains within the cell from expanding and opening establishments between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_rate_births    | 100 * (job_creation_births / denom)
+&nbsp; | job_creation_rate           | 100 * (job_creation / denom)
+&nbsp; | job_destruction             | Count of all employment losses within the cell from contracting and closing establishments between the week of March 12 of the prior year to the current year.
+&nbsp; | job_destruction_deaths      | Count of all employment losses within the cell from establishment closings (deaths) between the week of March 12 of the prior year to the current year.
+&nbsp; | job_creation_continuers     | Count of employment losses within the cell from continuing establishments that contracted between the week of March 12 of the prior year to the current year. 
+&nbsp; | `'_destruction_rate_deaths| 100 * (job_destruction_deaths / denom)
 &nbsp; | job_destruction_rate        | 100 * (job_destruction divided / denom)
 &nbsp; | net_job_creation            | job_creation - job_destruction
 &nbsp; | net_job_creation_rate       | job_creation_rate - job_destruction_rate
