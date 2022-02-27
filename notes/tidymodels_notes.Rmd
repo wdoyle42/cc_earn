@@ -31,7 +31,7 @@ Software used to create models should:
 
 ### Inferential Models
 
-> The goal of an inferential model is to produce a decision for a research question or to test a specific hypothesis, in much the way that statistical tests are used1. The goal is to make some statement of truth regarding a predefined conjecture or idea. In many (but not all) cases, a qualitative statement is produced (e.g., a difference was “statistically significant”).
+> The goal of an inferential model is to produce a decision for a research question or to test a specific hypothesis, in much the way that statistical tests are used. The goal is to make some statement of truth regarding a predefined conjecture or idea. In many (but not all) cases, a qualitative statement is produced (e.g., a difference was “statistically significant”).
 
 > Inferential modeling techniques typically produce some type of probabilistic output, such as a p-value, confidence interval, or posterior probability. Generally, to compute such a quantity, formal probabilistic assumptions must be made about the data and the underlying processes that generated the data
 
