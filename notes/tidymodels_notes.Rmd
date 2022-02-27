@@ -10,16 +10,12 @@ knitr::opts_chunk$set(echo = TRUE,
 
 # TidyModels Notes
 
-## What Ben is looking for
-- Overall read through to get the gist
-- Keep track of questions along the way (for me to answer or for us to answer as we both learn more)
-- Be thinking about how we’ll use TM in the cc_earn project (notes here too)
-
 ## Software for Modeling
 
 Models are very multifaceted & serve various purposes in statistical methods, but they are ultimately meant to disentangle complicated statistical phenomena.
 
 Software used to create models should:
+
 - have a easy-to-use interface
 - protect users from making mistakes
 
