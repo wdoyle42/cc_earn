@@ -1,6 +1,9 @@
 ---
 title: "tidymodels_notes"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -25,9 +28,10 @@ Descriptive models are used generally to describe data attributes/traits, more o
 
 ### Inferential Models
 
-> The goal of an inferential model is to produce a decision for a research question or to test a specific hypothesis, in much the way that statistical tests are used. The goal is to make some statement of truth regarding a predefined conjecture or idea. In many (but not all) cases, a qualitative statement is produced (e.g., a difference was “statistically significant”).
+Models of this nature are use to test a particular claim of a relationship between variables, a particular hypothesis, etc. After this model is created, a state of statistical significance/insignificance is produced
 
-> Inferential modeling techniques typically produce some type of probabilistic output, such as a p-value, confidence interval, or posterior probability. Generally, to compute such a quantity, formal probabilistic assumptions must be made about the data and the underlying processes that generated the data
+Output from these models usually includes a p-value, confidence intervals, etc. to estimate probabilites (i.e., of committing Type 1 error, etc.)
+
 
 ### Predictive Models 
 *These models deal with questions of estimation as opposed to inference*
@@ -96,3 +100,163 @@ Steps to creating useful model:
 - tuning
 - performance assessment
 
+data spending: allocating specific subsets of data to do different things
+
+common ways to split/"spend" data:
+
+- split the larger dataset into two, using one as a training set to develop & optimize the model
+    - the second set is the test set, used after 1-2 models are selected and the test set is used to produce these models & determine their efficacy
+- r function initial_split() will perform this action for you, takes the dataset & desired ratio as arguments
+    - training() and testing() will produce the necessary datasets with the object you just created with initial_split()
+    
+can either use simple random sampling/stratified sampling to contribute to the model (depends on the level of imbalance in the data)
+- the strata argument can be added to the initial_split() function to conduct stratified random sampling
+
+**for time series data: initial_time_split() will save most recent data for the test set
+
+validation sets can also be part of this data splitting process, getting a sense of model performance before using the test set
+
+with multi-level data, have to keep in mind that data splitting should be happening according to the independent unit level of the data
+
+# Fitting models with parsnip
+
+Parsnip is a tidymodels package that can be used to produce a variety of different models
+- the functions fit() and predict() are the most commonly used with a parsnip object
+
+example: modeling linear regression
+
+- base R: lm() for ordinary linear regression and stan_glm() for regularized linear regression (Bayesian); for non-Bayesian approach & regularized regression --> glmnet()
+- tidymodels unifies this process, eliminates need to memorized different syntax for functions
+  1) identify model type (linear regression, random forest, etc.)
+  2) identify engine for fitting the model (i.e., software package)
+  3) identify the mode of the model (regression/classification)
+
+&nbsp;
+
+      linear_reg() %>% set_engine("lm")
+      # linear regression model specification, computational engine: lm
+    
+      linear_reg() %>% set_engine("glmnet")
+      # linear regression model specification, computational engine: glmnet
+
+    
+you can use fit() or fit_xy() to begin model estimation; fit() is more appropriately used with a formula, fit_xy() is more appropriate if data is pre-processed
+
+translate() will explain the process of the user's code being converted to package syntax
+
+
+      linear_reg() %>% set_engine("lm") %>% translate()
+      # Linear Regression Model Specification (regression)
+      # Computational engine: lm 
+      # Model fit template:
+      # stats::lm(formula = missing_arg(), data = missing_arg(), weights = missing_arg())
+
+      lm_model <- 
+        linear_reg() %>% 
+        set_engine("lm")
+
+      lm_form_fit <- 
+        lm_model %>% 
+ 
+      fit(Sale_Price ~ Longitude + Latitude, data = ames_train)
+
+      lm_xy_fit <- 
+        lm_model %>% 
+        fit_xy(
+            x = ames_train %>% select(Longitude, Latitude),
+            y = ames_train %>% pull(Sale_Price)
+          )
+
+      lm_form_fit
+
+      # Call:
+      # stats::lm(formula = Sale_Price ~ Longitude + Latitude, data = data)
+      #
+      # Coefficients:
+      # (Intercept)    Longitude     Latitude  
+      #     -302.97        -2.07         2.71
+      #  
+      
+      lm_xy_fit
+      
+      # parsnip model object
+      #
+      #
+      # Call:
+      # stats::lm(formula = ..y ~ ., data = data)
+      # 
+      # Coefficients:
+      # (Intercept)    Longitude     Latitude  
+      #     -302.97        -2.07         2.71
+
+
+parsnip also provides consistency in model arguments
+ex: random forest function w/ parsnip (arguments)
+
+- number of sampled predictors (mtry)
+- number of trees (trees)
+- number of data points to split (min_n)
+
+model arguments in parsnip are separated into two different categories:
+- main arguments: commonly used & available across engines
+- engine arguments: specific to a particular engine, can be specified in set_engine()
+
+## Using Model Results
+
+Examining model output using extract_fit_engine(), adding vcov() will return model output as matrix
+
+However, matrices are not super malleable/easy to change & manipulate
+
+- the broom package in tidymodels convert all different kinds of objects to a tidy structure
+  - column names are standardized across models
+  - row names converted to columns
+
+## Make predictions
+
+predict() function
+
+- returns results in tibble format
+- column names are always predictable
+- as many rows in the tibble as there are in the input data
+
+these features make the merging of predictions & original data much easier
+
+![The tidymodels mapping of prediction types and column names](./tidymodels_columns.png){width=50%}
+&nbsp;
+
+other packages can be used with parsnip, list found [here](https://www.tidymodels.org/find/)
+
+parsnip_addin() will provide a list of possible models for each model mode
+
+# A model workflow
+
+![Model equation](./model_equation.png){width=50%}
+
+Above is the typical structural equation for a linear model, including predictors (x) and outcome variable (y).
+
+**a feature selection algorithm is mentioned to determine the minimum predictors needed for the model, wish i knew what that was lmao**
+
+model workflow: pre-processing steps, model fit and potential post-processing activities
+
+![Correct mental model of where model estimation occurs in the data analysis process.](./model_workflow.png){width=50%}
+
+workflows package in R:
+
+    lm_wflow <- 
+      workflow() %>% 
+      add_model(lm_model)
+
+    lm_wflow
+    #> ══ Workflow ═════════════════════════════════════════════════════════════════════════
+    #> Preprocessor: None
+    #> Model: linear_reg()
+    #> 
+    #> ── Model ────────────────────────────────────────────────────────────────────────────
+    #> Linear Regression Model Specification (regression)
+    #> 
+    #> Computational engine: lm
+    
+*with a simple model, a formula would be added as a preprocessor using add_formula()
+
+- fit() can be used to create the model; takes created workflow & data as arguments, use predict() after on the fitted workflow
+- use update_formula() to update/remove model and/or preprocessor
