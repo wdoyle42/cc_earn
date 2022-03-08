@@ -1,9 +1,8 @@
 ---
 title: "tidymodels_notes"
 output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+  pdf_document: 
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -171,7 +170,7 @@ translate() will explain the process of the user's code being converted to packa
 
       # Call:
       # stats::lm(formula = Sale_Price ~ Longitude + Latitude, data = data)
-      #
+      
       # Coefficients:
       # (Intercept)    Longitude     Latitude  
       #     -302.97        -2.07         2.71
@@ -221,7 +220,7 @@ predict() function
 
 these features make the merging of predictions & original data much easier
 
-![The tidymodels mapping of prediction types and column names](./tidymodels_columns.png){width=50%}
+![The tidymodels mapping of prediction types and column names](../tidymodels_columns.png){width=50%}
 &nbsp;
 
 other packages can be used with parsnip, list found [here](https://www.tidymodels.org/find/)
@@ -230,7 +229,7 @@ parsnip_addin() will provide a list of possible models for each model mode
 
 # A model workflow
 
-![Model equation](./model_equation.png){width=50%}
+![Model equation](../model_equation.png){width=50%}
 
 Above is the typical structural equation for a linear model, including predictors (x) and outcome variable (y).
 
@@ -238,7 +237,7 @@ Above is the typical structural equation for a linear model, including predictor
 
 model workflow: pre-processing steps, model fit and potential post-processing activities
 
-![Correct mental model of where model estimation occurs in the data analysis process.](./model_workflow.png){width=50%}
+![Correct mental model of where model estimation occurs in the data analysis process.](../model_workflow.png){width=50%}
 
 workflows package in R:
 
@@ -247,11 +246,11 @@ workflows package in R:
       add_model(lm_model)
 
     lm_wflow
-    #> ══ Workflow ═════════════════════════════════════════════════════════════════════════
+    #> ══ Workflow ════════════════════════════════════════════════
     #> Preprocessor: None
     #> Model: linear_reg()
     #> 
-    #> ── Model ────────────────────────────────────────────────────────────────────────────
+    #> ── Model ────────────────────────────────────────────────────────────
     #> Linear Regression Model Specification (regression)
     #> 
     #> Computational engine: lm
@@ -260,3 +259,4 @@ workflows package in R:
 
 - fit() can be used to create the model; takes created workflow & data as arguments, use predict() after on the fitted workflow
 - use update_formula() to update/remove model and/or preprocessor
+
