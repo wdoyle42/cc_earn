@@ -1,14 +1,17 @@
 ---
 title: "tidymodels_notes"
 output:
-  pdf_document: default
+  pdf_document:
+    extra_dependencies: float
   html_document:
     df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, 
-                      out.width = "75%")
+                      out.width = "75%",
+                      fig.align = "left", 
+                      out.extra = "")
 ```
 
 ## Software for modeling
@@ -66,7 +69,7 @@ Process for choosing appropriate model
 
 - Exploratory data analysis (EDA)
   - oscillating between numerical analysis & data visualization
-- Feature engineering
+- Feature engineering (might have to look more into this, kinda went over my head a bit)
   - refiguring predictors to make them easier to model
 - Model tuning and selection
   - creating initial models to assess & compare; usually involves parameter tuning, etc.
@@ -229,3 +232,34 @@ other packages can be used with parsnip, list found [here](https://www.tidymodel
 parsnip_addin() will provide a list of possible models for each model mode
 
 # A model workflow
+
+![Model equation](./model_equation.png){width=50%}
+
+Above is the typical structural equation for a linear model, including predictors (x) and outcome variable (y).
+
+**a feature selection algorithm is mentioned to determine the minimum predictors needed for the model, wish i knew what that was lmao**
+
+model workflow: pre-processing steps, model fit and potential post-processing activities
+
+![Correct mental model of where model estimation occurs in the data analysis process.](./model_workflow.png){width=50%}
+
+workflows package in R:
+
+    lm_wflow <- 
+      workflow() %>% 
+      add_model(lm_model)
+
+    lm_wflow
+    #> ══ Workflow ═════════════════════════════════════════════════════════════════════════
+    #> Preprocessor: None
+    #> Model: linear_reg()
+    #> 
+    #> ── Model ────────────────────────────────────────────────────────────────────────────
+    #> Linear Regression Model Specification (regression)
+    #> 
+    #> Computational engine: lm
+    
+*with a simple model, a formula would be added as a preprocessor using add_formula()
+
+- fit() can be used to create the model; takes created workflow & data as arguments, use predict() after on the fitted workflow
+- use update_formula() to update/remove model and/or preprocessor
