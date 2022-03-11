@@ -3,6 +3,7 @@ title: "tidymodels_notes"
 output:
   pdf_document: 
     latex_engine: xelatex
+ 
 ---
 
 ```{r setup, include=FALSE}
@@ -259,4 +260,267 @@ workflows package in R:
 
 - fit() can be used to create the model; takes created workflow & data as arguments, use predict() after on the fitted workflow
 - use update_formula() to update/remove model and/or preprocessor
+
+you can add raw variables to your workflow by using add_variables(); takes outcomes & predictors as arguments
+- any outcome variables accidentally used in the predictors will be removed; fit() then takes the ready workflow & training set data
+
+## Formulas & Workflow
+
+- different kinds of encoding procedures for formulas are necessary for different statistical methods
+- example: tree-based models
+  - when fitting a random forest model using ranger/randomForest, the workflow will know to leave the predictors columns that are factors alone
+- determinations regarding the need to create dummy variables, etc. is made for each model & engine combination
+  - ex: add_model() can take a formula argument to specify model formula
+  
+## Multiple Workflows
+
+can be helpful when trying to build predictive models (evaluate different model types)
+
+good for sequential testing (beginning with full model and gradually taking out predictors)
+
+workflowset creates combos of components of workflow (list of preprocessors & model specifications that be matched)
+  
+  
+      location <- list(
+        longitude = Sale_Price ~ Longitude,
+        latitude = Sale_Price ~ Latitude,
+        coords = Sale_Price ~ Longitude + Latitude,
+        neighborhood = Sale_Price ~ Neighborhood
+        )
+  
+      library(workflowsets)
+      location_models <- workflow_set(preproc = location, models = list(lm = lm_model))
+        
+      location_models
+    #> # A workflow set/tibble: 4 × 4
+    #>   wflow_id        info             option    result    
+    #>   <chr>           <list>           <list>    <list>    
+    #> 1 longitude_lm    <tibble [1 × 4]> <opts[0]> <list [0]>
+    #> 2 latitude_lm     <tibble [1 × 4]> <opts[0]> <list [0]>
+    #> 3 coords_lm       <tibble [1 × 4]> <opts[0]> <list [0]>
+    #> 4 neighborhood_lm <tibble [1 × 4]> <opts[0]> <list [0]>
+
+    location_models$info[[1]]
+    #> # A tibble: 1 × 4
+    #>   workflow   preproc model      comment
+    #>   <list>     <chr>   <chr>      <chr>  
+    #> 1 <workflow> formula linear_reg ""
+    extract_workflow(location_models, id = "coords_lm")
+    
+    #> ══ Workflow ═══════════════════════════════════════════════════
+    #> Preprocessor: Formula
+    #> Model: linear_reg()
+    #> 
+    #> ── Preprocessor ─────────────────────────────────────────────────────────
+    #> Sale_Price ~ Longitude + Latitude
+    #> 
+    #> ── Model ────────────────────────────────────────────────────────────────
+    #> Linear Regression Model Specification (regression)
+    #> 
+    #> Computational engine: lm
+  
+# Feature engineering with recipes
+
+- feature engineering involves reformatting predictors to make them easier to use in a model
+  - can be done with recipes package; combines preprocessing/feature engineering tasks into one object to then apply to different data sets
+  
+- a recipe essentially works like a formula without actually executing anything
+  - it lists out what should be done
+
+## Formula
+
+    lm(Sale_Price ~ Neighborhood + log10(Gr_Liv_Area) + Year_Built + Bldg_Type, data = ames)
+
+## Recipe
+
+    library(tidymodels) # Includes the recipes package
+    tidymodels_prefer()
+
+    simple_ames <- 
+      recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type,
+            data = ames_train) %>%
+      step_log(Gr_Liv_Area, base = 10) %>% 
+      step_dummy(all_nominal_predictors())
+      
+    simple_ames
+    
+    #> Recipe
+    #> 
+    #> Inputs:
+    #> 
+    #>       role #variables
+    #>    outcome          1
+    #>  predictor          4
+    #> 
+    #> Operations:
+    #> 
+    #> Log transformation on Gr_Liv_Area
+    #> Dummy variables from all_nominal_predictors()
+    
+
+step_dummy() converts qualitative data to dummy/indicator variables; all_nominal_predictors() is a function that captures predictor columns that are nominal in nature
+
+advantages of recipes:
+
+- computations can be reused across models
+- recipes offer broader set of choices for data processing not available with formulas
+- compact syntax
+- data processing can be captured in single R object
+
+if adding recipes to existing workflow:
+  - remember to remove variables if previous preprocessing method was used: remove_variables(), then use add_recipe()
+
+use new workflow & training data to call fit() and use the predict() function to test data; extract_recipe() can be used to retrieve recipe details after it's been estimated
+
+      lm_fit %>% 
+        extract_recipe(estimated = TRUE)
+    #> Recipe
+    #> 
+    #> Inputs:
+    #> 
+    #>       role #variables
+    #>    outcome          1
+    #>  predictor          4
+    #> 
+    #> Training data contained 2342 data points and no missing data.
+    #> 
+    #> Operations:
+    #> 
+    #> Log transformation on Gr_Liv_Area [trained]
+    #> Dummy variables from Neighborhood, Bldg_Type [trained]
+    
+    lm_fit %>% 
+      # This returns the parsnip object:
+      extract_fit_parsnip() %>% 
+      # Now tidy the linear model object:
+      tidy() %>% 
+      slice(1:5)
+    #> # A tibble: 5 × 5
+    #>   term                       estimate std.error statistic   p.value
+    #>   <chr>                         <dbl>     <dbl>     <dbl>     <dbl>
+    #> 1 (Intercept)                -0.669    0.231        -2.90 3.80e-  3
+    #> 2 Gr_Liv_Area                 0.620    0.0143       43.2  2.63e-299
+    #> 3 Year_Built                  0.00200  0.000117     17.1  6.16e- 62
+    #> 4 Neighborhood_College_Creek  0.0178   0.00819       2.17 3.02e-  2
+    #> 5 Neighborhood_Old_Town      -0.0330   0.00838      -3.93 8.66e-  5
+    
+## How data are used by the recipe
+
+1) when calling recipe(), data serves as an argument of the function to determine the data types for each column and facilitate future use of selectors like all_numeric(), etc.
+2) when calling fit(), the training data are used for estimation operations
+3) when calling predict(), takes new test data and values are standardized based on training data values
+
+## Recipes package capabilities
+
+-encoding qualitative data (ex: step_other() can be used to group infrequent values into a catch-all level)
+- step_dummy() to create dummy/indicator variables for factor predictors
+  - also allows for user to customize the naming of the dummy variable created
+
+## Interactions
+
+specified using step_interact(~ interaction term) *can use selectors in interaction term*
+
+    simple_ames <- 
+      recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type,
+            data = ames_train) %>%
+      step_log(Gr_Liv_Area, base = 10) %>% 
+      step_other(Neighborhood, threshold = 0.01) %>% 
+      step_dummy(all_nominal_predictors()) %>% 
+      
+      # Gr_Liv_Area is on the log scale from a previous step
+      
+      step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_") )
+ 
+## Spline functions
+
+spline terms replace existing numeric predictors with a set of columns that allow the model to emulate a non-linear relationship
+
+    recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + Latitude,
+            data = ames_train) %>%
+      step_log(Gr_Liv_Area, base = 10) %>% 
+      step_other(Neighborhood, threshold = 0.01) %>% 
+      step_dummy(all_nominal_predictors()) %>% 
+      step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_") ) %>% 
+      step_ns(Latitude, deg_free = 20)
+
+## Feature extraction
+
+- if creating new features from existing predictors (a la PCA), step_pca() can be used in recipe
+  - step_normalize() might be needed before if the columns used are not all measured the same
+  
+## Row sampling steps
+
+- downsampling: keeps minority class & takes random sample of majority so class frequencies are balanced
+- upsampling: replicates samples from minority class to balance the classes
+- hybrid: combination of both
+
+*themis package has recipe steps for this, ex. from it: step_downsample(outcome_column_name)*
+
+## More
+
+- step_mutate() can be used for general transformations
+- textrecipes package can be used to apply natural language processing methods to data (ex: split string of text into separate words, etc.)
+- subsampling processes, etc. should not be applied to the data being predicted
+  - each step function mentioned has a skip option; set it to TRUE so that it will be ignored by the predict function
+  - all steps are then applied when using fit()
+
+## Tidy a recipe
+
+when using tidy() along with your recipe object, a summary of the recipe steps will appear
+
+    tidy(ames_rec)
+    #> # A tibble: 5 × 6
+    #>   number operation type     trained skip  id            
+    #>    <int> <chr>     <chr>    <lgl>   <lgl> <chr>         
+    #> 1      1 step      log      FALSE   FALSE log_66JTU     
+    #> 2      2 step      other    FALSE   FALSE other_ePfcw   
+    #> 3      3 step      dummy    FALSE   FALSE dummy_Z18Cl   
+    #> 4      4 step      interact FALSE   FALSE interact_JLU36
+    #> 5      5 step      ns       FALSE   FALSE ns_rvsqQ
+
+can specific id column if wanting to tidy() it
+
+    ames_rec <- 
+      recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + 
+              Latitude + Longitude, data = ames_train) %>%
+      step_log(Gr_Liv_Area, base = 10) %>% 
+      step_other(Neighborhood, threshold = 0.01, id = "my_id") %>% 
+      step_dummy(all_nominal_predictors()) %>% 
+      step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_") ) %>% 
+      step_ns(Latitude, Longitude, deg_free = 20)
+
+refit workflow with new recipe, call tidy() with new object
+
+    estimated_recipe <- 
+      lm_fit %>% 
+      extract_recipe(estimated = TRUE)
+
+    tidy(estimated_recipe, id = "my_id")
+    
+    #> # A tibble: 22 × 3
+    #>   terms        retained           id   
+    #>   <chr>        <chr>              <chr>
+    #> 1 Neighborhood North_Ames         my_id
+    #> 2 Neighborhood College_Creek      my_id
+    #> 3 Neighborhood Old_Town           my_id
+    #> 4 Neighborhood Edwards            my_id
+    #> 5 Neighborhood Somerset           my_id
+    #> 6 Neighborhood Northridge_Heights my_id
+    #> # … with 16 more rows
+    
+step numbers can also be used in the tidy() call
+
+## Column Roles
+
+- columns used in the formula in recipe() are usually assigned a "predictor" or "outcome" depending on which side of the tilde they're on
+  - however, if there's a column you'd like to keep that does not fall into one of those categories, you can use add_roles(), update_roles(), remove_roles()
+  - can be helpful when data are resampled
+  
+  
+    ames_rec %>% update_role(address, new_role = "street address")
+    
+all possible recipe steps found [here](https://www.tidymodels.org/find/)
+
+# Judging model effectiveness
+
 
