@@ -131,7 +131,7 @@ example: modeling linear regression
   2) identify engine for fitting the model (i.e., software package)
   3) identify the mode of the model (regression/classification)
 
-&nbsp;
+Example code:
 
       linear_reg() %>% set_engine("lm")
       # linear regression model specification, computational engine: lm
@@ -144,6 +144,7 @@ you can use fit() or fit_xy() to begin model estimation; fit() is more appropria
 
 translate() will explain the process of the user's code being converted to package syntax
 
+Example code:
 
       linear_reg() %>% set_engine("lm") %>% translate()
       # Linear Regression Model Specification (regression)
@@ -242,6 +243,8 @@ model workflow: pre-processing steps, model fit and potential post-processing ac
 
 workflows package in R:
 
+Example code:
+
     lm_wflow <- 
       workflow() %>% 
       add_model(lm_model)
@@ -280,6 +283,7 @@ good for sequential testing (beginning with full model and gradually taking out 
 
 workflowset creates combos of components of workflow (list of preprocessors & model specifications that be matched)
   
+  Example code:
   
       location <- list(
         longitude = Sale_Price ~ Longitude,
@@ -329,9 +333,13 @@ workflowset creates combos of components of workflow (list of preprocessors & mo
 
 ## Formula
 
+Example code:
+
     lm(Sale_Price ~ Neighborhood + log10(Gr_Liv_Area) + Year_Built + Bldg_Type, data = ames)
 
 ## Recipe
+
+Example code:
 
     library(tidymodels) # Includes the recipes package
     tidymodels_prefer()
@@ -371,6 +379,8 @@ if adding recipes to existing workflow:
   - remember to remove variables if previous preprocessing method was used: remove_variables(), then use add_recipe()
 
 use new workflow & training data to call fit() and use the predict() function to test data; extract_recipe() can be used to retrieve recipe details after it's been estimated
+
+Example code:
 
       lm_fit %>% 
         extract_recipe(estimated = TRUE)
@@ -420,6 +430,8 @@ use new workflow & training data to call fit() and use the predict() function to
 
 specified using step_interact(~ interaction term) *can use selectors in interaction term*
 
+Example code:
+
     simple_ames <- 
       recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type,
             data = ames_train) %>%
@@ -434,6 +446,8 @@ specified using step_interact(~ interaction term) *can use selectors in interact
 ## Spline functions
 
 spline terms replace existing numeric predictors with a set of columns that allow the model to emulate a non-linear relationship
+
+Example code:
 
     recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + Latitude,
             data = ames_train) %>%
@@ -468,6 +482,8 @@ spline terms replace existing numeric predictors with a set of columns that allo
 
 when using tidy() along with your recipe object, a summary of the recipe steps will appear
 
+Example code:
+
     tidy(ames_rec)
     #> # A tibble: 5 × 6
     #>   number operation type     trained skip  id            
@@ -480,6 +496,8 @@ when using tidy() along with your recipe object, a summary of the recipe steps w
 
 can specific id column if wanting to tidy() it
 
+Example code:
+
     ames_rec <- 
       recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + 
               Latitude + Longitude, data = ames_train) %>%
@@ -490,6 +508,8 @@ can specific id column if wanting to tidy() it
       step_ns(Latitude, Longitude, deg_free = 20)
 
 refit workflow with new recipe, call tidy() with new object
+
+Example code:
 
     estimated_recipe <- 
       lm_fit %>% 
@@ -516,6 +536,7 @@ step numbers can also be used in the tidy() call
   - however, if there's a column you'd like to keep that does not fall into one of those categories, you can use add_roles(), update_roles(), remove_roles()
   - can be helpful when data are resampled
   
+  Example code:
   
     ames_rec %>% update_role(address, new_role = "street address")
     
@@ -523,4 +544,572 @@ all possible recipe steps found [here](https://www.tidymodels.org/find/)
 
 # Judging model effectiveness
 
+tidymodels emphasizes empirical validation (using data not used to create the model to measure effectiveness)
+- performance metrics are typically used in empirical validation
+  - it's important to choose an appropriate method, as different metrics demonstrate different things (ex: RMSE measures accuracy, R-squared measures correlation)
+- model results should always be accompanied by some measure of fidelity to the data
 
+## Regression metrics
+*using yardstick tidymodels package, have prediction functions*
+
+- uses test data set & already created linear regression model to compare predicted & observed sale prices of housing data
+
+Example code:
+
+    ames_test_res <- predict(lm_fit, new_data = ames_test %>% select(-Sale_Price))
+    ames_test_res
+
+    #> # A tibble: 588 × 1
+    #>   .pred
+    #>   <dbl>
+    #> 1  5.07
+    #> 2  5.31
+    #> 3  5.28
+    #> 4  5.33
+    #> 5  5.30
+    #> 6  5.24
+    #> # … with 582 more rows
+    
+    ames_test_res <- bind_cols(ames_test_res, ames_test %>% select(Sale_Price))
+    ames_test_res
+    #> # A tibble: 588 × 2
+    #>   .pred Sale_Price
+    #>   <dbl>      <dbl>
+    #> 1  5.07       5.02
+    #> 2  5.31       5.39
+    #> 3  5.28       5.28
+    #> 4  5.33       5.28
+    #> 5  5.30       5.28
+    #> 6  5.24       5.26
+    #> # … with 582 more rows
+    
+    ggplot(ames_test_res, aes(x = Sale_Price, y = .pred)) + 
+    # Create a diagonal line:
+      geom_abline(lty = 2) + 
+      geom_point(alpha = 0.5) + 
+      labs(y = "Predicted Sale Price (log10)", x = "Sale Price (log10)") +
+      # Scale and size the x- and y-axis uniformly:
+      coord_obs_pred()
+      
+can compute RMSE using rmse() function
+
+Example code:
+
+    rmse(ames_test_res, truth = Sale_Price, estimate = .pred)
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 rmse    standard      0.0736
+    
+a metric set can be created to compare multiple metrics
+
+Example code:
+
+    ames_metrics <- metric_set(rmse, rsq, mae)
+    ames_metrics(ames_test_res, truth = Sale_Price, estimate = .pred)
+    #> # A tibble: 3 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 rmse    standard      0.0736
+    #> 2 rsq     standard      0.836 
+    #> 3 mae     standard      0.0549
+
+## Binary classification metrics
+*using modeldata package w/ example predictions from test data set*
+
+Example code:
+
+    data(two_class_example)
+    str(two_class_example)
+    #> 'data.frame':    500 obs. of  4 variables:
+    #>  $ truth    : Factor w/ 2 levels "Class1","Class2": 2 1 2 1 2 1 1 1 2 2 ...
+    #>  $ Class1   : num  0.00359 0.67862 0.11089 0.73516 0.01624 ...
+    #>  $ Class2   : num  0.996 0.321 0.889 0.265 0.984 ...
+    #>  $ predicted: Factor w/ 2 levels "Class1","Class2": 2 1 2 1 2 1 1 1 2 2 ...
+    
+hard class prediction functions:
+
+- conf_mat() 
+- accuracy()
+- mcc() for Matthews correlation coefficient
+- f_meas() for F1 metric
+
+*classification_metrics() for combining metrics together*
+
+Example code:
+
+    # A confusion matrix: 
+    conf_mat(two_class_example, truth = truth, estimate = predicted)
+    #>           Truth
+    #> Prediction Class1 Class2
+    #>     Class1    227     50
+    #>     Class2     31    192
+
+    # Accuracy:
+    accuracy(two_class_example, truth, predicted)
+    #> # A tibble: 1 × 3
+    #>   .metric  .estimator .estimate
+    #>   <chr>    <chr>          <dbl>
+    #> 1 accuracy binary         0.838
+
+    # Matthews correlation coefficient:
+    mcc(two_class_example, truth, predicted)
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 mcc     binary         0.677
+
+    # F1 metric:
+    f_meas(two_class_example, truth, predicted)
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 f_meas  binary         0.849
+
+    # Combining these three classification metrics together
+    classification_metrics <- metric_set(accuracy, mcc, f_meas)
+    classification_metrics(two_class_example, truth = truth, estimate = predicted)
+    #> # A tibble: 3 × 3
+    #>   .metric  .estimator .estimate
+    #>   <chr>    <chr>          <dbl>
+    #> 1 accuracy binary         0.838
+    #> 2 mcc      binary         0.677
+    #> 3 f_meas   binary         0.849
+    
+  
+*can specify event level when, for example, the second class is the event*
+
+using predicted probabilities as inputs
+
+- ROC (receiver operating characteristic) curve computes sensitivity/specificity over continuum of different event thresholds
+- two yardstick functions: roc_curve() to compute data points that make up the curve and roc_auc() that computes the area under the curve
+
+Example code:
+
+    two_class_curve <- roc_curve(two_class_example, truth, Class1)
+    two_class_curve
+    #> # A tibble: 502 × 3
+    #>   .threshold specificity sensitivity
+    #>        <dbl>       <dbl>       <dbl>
+    #> 1 -Inf           0                 1
+    #> 2    1.79e-7     0                 1
+    #> 3    4.50e-6     0.00413           1
+    #> 4    5.81e-6     0.00826           1
+    #> 5    5.92e-6     0.0124            1
+    #> 6    1.22e-5     0.0165            1
+    #> # … with 496 more rows
+
+    roc_auc(two_class_example, truth, Class1)
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 roc_auc binary         0.939
+
+autoplot() will plot details of curve
+
+functions that use probability estimates
+
+- gain_curve()
+- lift_curve()
+- pr_curve()
+
+## Multi-class classification metrics
+
+same functions as the binary classification metrics
+
+Example code:
+
+    accuracy(hpc_cv, obs, pred)
+    #> # A tibble: 1 × 3
+    #>   .metric  .estimator .estimate
+    #>   <chr>    <chr>          <dbl>
+    #> 1 accuracy multiclass     0.709
+
+    mcc(hpc_cv, obs, pred)
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 mcc     multiclass     0.515
+    
+wrapper methods can be used to apply sensitivity to outcomes that are more than 2 classes:
+
+- macro-averaging
+- macro-weighted averaging
+- micro-averaging
+
+Example code:
+
+    sensitivity(hpc_cv, obs, pred, estimator = "macro")
+    
+    #> # A tibble: 1 × 3
+    #>   .metric     .estimator .estimate
+    #>   <chr>       <chr>          <dbl>
+    #> 1 sensitivity macro          0.560
+    
+    sensitivity(hpc_cv, obs, pred, estimator = "macro_weighted")
+    
+    #> # A tibble: 1 × 3
+    #>   .metric     .estimator     .estimate
+    #>   <chr>       <chr>              <dbl>
+    #> 1 sensitivity macro_weighted     0.709
+    
+    sensitivity(hpc_cv, obs, pred, estimator = "micro")
+    
+    #> # A tibble: 1 × 3
+    #>   .metric     .estimator .estimate
+    #>   <chr>       <chr>          <dbl>
+    #> 1 sensitivity micro          0.709
+    
+roc_auc() can also be used, need to pass all class probability columns into the function
+
+Example code:
+
+    roc_auc(hpc_cv, obs, VF, F, M, L)
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator .estimate
+    #>   <chr>   <chr>          <dbl>
+    #> 1 roc_auc hand_till      0.829
+    
+    roc_auc(hpc_cv, obs, VF, F, M, L, estimator = "macro_weighted")
+    #> # A tibble: 1 × 3
+    #>   .metric .estimator     .estimate
+    #>   <chr>   <chr>              <dbl>
+    #> 1 roc_auc macro_weighted     0.868
+    
+metrics can also be computed using dplyr grouping mechanisms
+
+Example code:
+
+    hpc_cv %>% 
+      group_by(Resample) %>% 
+      accuracy(obs, pred)
+    #> # A tibble: 10 × 4
+    #>   Resample .metric  .estimator .estimate
+    #>   <chr>    <chr>    <chr>          <dbl>
+    #> 1 Fold01   accuracy multiclass     0.726
+    #> 2 Fold02   accuracy multiclass     0.712
+    #> 3 Fold03   accuracy multiclass     0.758
+    #> 4 Fold04   accuracy multiclass     0.712
+    #> 5 Fold05   accuracy multiclass     0.712
+    #> 6 Fold06   accuracy multiclass     0.697
+    #> # … with 4 more rows
+    
+    # Four 1-vs-all ROC curves for each fold
+    hpc_cv %>% 
+      group_by(Resample) %>% 
+      roc_curve(obs, VF, F, M, L) %>% 
+      autoplot()
+
+# Resampling for evaluating performance
+
+*making model assessments with resubstitution approach*
+comparing linear & random forest models
+
+Example code: 
+
+    estimate_perf <- function(model, dat) {
+      # Capture the names of the objects used
+      cl <- match.call()
+      obj_name <- as.character(cl$model)
+      data_name <- as.character(cl$dat)
+      data_name <- gsub("ames_", "", data_name)
+  
+      # Estimate these metrics:
+      reg_metrics <- metric_set(rmse, rsq)
+  
+      model %>% 
+        predict(dat) %>% 
+        bind_cols(dat %>% select(Sale_Price)) %>% 
+        reg_metrics(Sale_Price, .pred) %>% 
+        select(-.estimator) %>% 
+        mutate(object = obj_name, data = data_name)
+    }
+    
+code creates new function to estimate model performance, using RMSE & rsq to compare
+
+Example code:
+
+    estimate_perf(rf_fit, ames_train)
+    
+    #> # A tibble: 2 × 4
+    #>   .metric .estimate object data 
+    #>   <chr>       <dbl> <chr>  <chr>
+    #> 1 rmse       0.0365 rf_fit train
+    #> 2 rsq        0.960  rf_fit train
+    
+    estimate_perf(lm_fit, ames_train)
+    #> # A tibble: 2 × 4
+    #>   .metric .estimate object data 
+    #>   <chr>       <dbl> <chr>  <chr>
+    #> 1 rmse       0.0754 lm_fit train
+    #> 2 rsq        0.816  lm_fit train
+
+random forest RMSE metric is better, use random forest with test set
+
+Example code:
+
+    estimate_perf(rf_fit, ames_test)
+    #> # A tibble: 2 × 4
+    #>   .metric .estimate object data 
+    #>   <chr>       <dbl> <chr>  <chr>
+    #> 1 rmse       0.0704 rf_fit test 
+    #> 2 rsq        0.852  rf_fit test
+    
+RMSE is way worse: why?
+
+- complexity of random forest allows for the model to basically memorize training set data
+
+solution: resampling methods
+
+## Resampling methods
+
+![Data splitting scheme from the initial data split to resampling.](../resampling_methods.png)
+resampling is conducted on the training set:
+
+- data is divided into two subsamples
+  - model fit w/ analysis set
+  - model evaluated w/ assessment set
+  
+## Cross-validation
+
+most common: V-fold cross-validation
+
+- data are partitioned into V sets of roughly equal size (called "folds")
+- for example, in 3-fold validation, three iterations are created and one fold is held out for each iteration for assessment statistics
+
+![V-fold cross-validation data usage.](../cross_validation.png)
+
+values of v should generally be larger in practice, most often 5 or 10
+
+Example code:
+
+    set.seed(1001)
+    
+    ames_folds <- vfold_cv(ames_train, v = 10)
+    
+    ames_folds
+    #> #  10-fold cross-validation 
+    
+    #> # A tibble: 10 × 2
+    
+    #>   splits             id    
+    #>   <list>             <chr> 
+    #> 1 <split [2107/235]> Fold01
+    #> 2 <split [2107/235]> Fold02
+    #> 3 <split [2108/234]> Fold03
+    #> 4 <split [2108/234]> Fold04
+    #> 5 <split [2108/234]> Fold05
+    #> 6 <split [2108/234]> Fold06
+    #> # … with 4 more rows
+
+- splits column holds information regarding data split
+
+- the functions analysis() and assessment() return corresponding data frames
+
+Example:
+
+    # For the first fold:
+    
+    ames_folds$splits[[1]] %>% analysis() %>% dim()
+    
+    #> [1] 2107   74
+    
+### Repeated cross-validation
+
+creating R repeats of V-fold cross-validation will decrease noisiness in initial estimate
+
+- repeat the fold generation R time to generate R collections of V partitions (V x R produces the final resampling estimate)
+- the summ. statistics from each model tend toward normal distribution (CLT)
+
+Example code:
+
+    vfold_cv(ames_train, v = 10, repeats = 5)
+    #> #  10-fold cross-validation repeated 5 times 
+    #> # A tibble: 50 × 3
+    #>   splits             id      id2   
+    #>   <list>             <chr>   <chr> 
+    #> 1 <split [2107/235]> Repeat1 Fold01
+    #> 2 <split [2107/235]> Repeat1 Fold02
+    #> 3 <split [2108/234]> Repeat1 Fold03
+    #> 4 <split [2108/234]> Repeat1 Fold04
+    #> 5 <split [2108/234]> Repeat1 Fold05
+    #> 6 <split [2108/234]> Repeat1 Fold06
+    #> # … with 44 more rows
+    
+### Leave-one-out cross-validation
+
+V is the number of data points in the training set; if there are n samples of traning set data, n models are fit using n-1 rows of the training set
+
+- each model will predict excluded point, and the n predictions are pooled at the end of the resampling
+- computationally excessive tbh
+
+### Monte Carlo cross-validation
+
+data is randomly selected to the assessment sets
+
+Example code:
+
+    mc_cv(ames_train, prop = 9/10, times = 20)
+    
+    #> # Monte Carlo cross-validation (0.9/0.1) with 20 resamples 
+    
+    #> # A tibble: 20 × 2
+    
+    #>   splits             id        
+    #>   <list>             <chr>     
+    #> 1 <split [2107/235]> Resample01
+    #> 2 <split [2107/235]> Resample02
+    #> 3 <split [2107/235]> Resample03
+    #> 4 <split [2107/235]> Resample04
+    #> 5 <split [2107/235]> Resample05
+    #> 6 <split [2107/235]> Resample06
+    #> # … with 14 more rows
+    
+## Validation sets
+
+usually used when original data set is super large; data is first split into testing/non testing data and the non testing data is then split into training and validation sets
+
+Example code:
+
+    set.seed(1002)
+    
+    val_set <- validation_split(ames_train, prop = 3/4)
+    
+    val_set
+    
+    #> # Validation Set Split (0.75/0.25)  
+    #> # A tibble: 1 × 2
+    #>   splits             id        
+    #>   <list>             <chr>     
+    #> 1 <split [1756/586]> validation
+
+### Bootstrapping
+
+taking a bootstrap sample (i.e. sampling w/ replacement) that is the same size as the training set
+
+![Bootstrapping data usage.](../bootstrap.png)
+Example code:
+
+    bootstraps(ames_train, times = 5)
+    
+    #> # Bootstrap sampling 
+    #> # A tibble: 5 × 2
+    #>   splits             id        
+    #>   <list>             <chr>     
+    #> 1 <split [2342/858]> Bootstrap1
+    #> 2 <split [2342/855]> Bootstrap2
+    #> 3 <split [2342/852]> Bootstrap3
+    #> 4 <split [2342/851]> Bootstrap4
+    #> 5 <split [2342/867]> Bootstrap5
+    
+### Rolling forecasting origin resampling
+
+used when data has a time component (when models need to estimate seasonal/temporal trends)
+
+- estimates model using historical data and evaluating with recent data
+
+![Data usage for rolling forecasting origin resampling.](../rolling_forecasting.png)
+
+Example code:
+
+    time_slices <- 
+      tibble(x = 1:365) %>% 
+      rolling_origin(initial = 6 * 30, assess = 30, skip = 29, cumulative = FALSE)
+
+    data_range <- function(x) {
+      summarize(x, first = min(x), last = max(x))
+    }
+
+    map_dfr(time_slices$splits, ~   analysis(.x) %>% data_range())
+    
+    #> # A tibble: 6 × 2
+    #>   first  last
+    #>   <int> <int>
+    #> 1     1   180
+    #> 2    31   210
+    #> 3    61   240
+    #> 4    91   270
+    #> 5   121   300
+    #> 6   151   330
+    
+    map_dfr(time_slices$splits, ~ assessment(.x) %>% data_range())
+    
+    #> # A tibble: 6 × 2
+    #>   first  last
+    #>   <int> <int>
+    #> 1   181   210
+    #> 2   211   240
+    #> 3   241   270
+    #> 4   271   300
+    #> 5   301   330
+    #> 6   331   360
+    
+## Estimating performance
+
+- analysis set is used to preprocess data and use preprocessed data to fit the model
+
+- stats produced by the analysis set are applied to assessment set; predictions from this set estimate model performance
+
+Example code:
+
+    model_spec %>% fit_resamples(formula,  resamples, ...)
+    model_spec %>% fit_resamples(recipe,   resamples, ...)
+    workflow   %>% fit_resamples(          resamples, ...)
+    
+-optional arguments: metrics (metric set of performance stats), control
+
+  - arguments for control: verbose (logical for printing logging), extract (function for retaining objects from each model iteration), save_pred (logical for saving assessment set predictions)
+  
+Example code:
+
+    keep_pred <- control_resamples(save_pred = TRUE, save_workflow = TRUE)
+
+    set.seed(1003)
+    
+    rf_res <- 
+      rf_wflow %>% 
+      fit_resamples(resamples = ames_folds, control = keep_pred)
+      
+    rf_res
+    
+    #> # Resampling results
+    #> # 10-fold cross-validation 
+    #> # A tibble: 10 × 5
+    #>   splits             id     .metrics         .notes           .predictions      
+    #>   <list>             <chr>  <list>           <list>           <list>            
+    #> 1 <split [2107/235]> Fold01 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [235 × 4]>
+    #> 2 <split [2107/235]> Fold02 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [235 × 4]>
+    #> 3 <split [2108/234]> Fold03 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [234 × 4]>
+    #> 4 <split [2108/234]> Fold04 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [234 × 4]>
+    #> 5 <split [2108/234]> Fold05 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [234 × 4]>
+    #> 6 <split [2108/234]> Fold06 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [234 × 4]>
+    #> # … with 4 more rows
+    
+
+to collect performance metric tibble (summarized over replicates): 
+
+    collect_metrics(rf_res)
+
+    #> # A tibble: 2 × 6
+
+    #>   .metric .estimator   mean     n std_err .config             
+    #>   <chr>   <chr>       <dbl> <int>   <dbl> <chr>               
+    #> 1 rmse    standard   0.0721    10 0.00305 Preprocessor1_Model1
+    #> 2 rsq     standard   0.831     10 0.0108  Preprocessor1_Model1
+    
+to collect predictions from assessment set:
+
+    assess_res <- collect_predictions(rf_res)
+    
+    assess_res
+    
+    #> # A tibble: 2,342 × 5
+    #>   id     .pred  .row Sale_Price .config             
+    #>   <chr>  <dbl> <int>      <dbl> <chr>               
+    #> 1 Fold01  5.10    10       5.09 Preprocessor1_Model1
+    #> 2 Fold01  4.92    27       4.90 Preprocessor1_Model1
+    #> 3 Fold01  5.21    47       5.08 Preprocessor1_Model1
+    #> 4 Fold01  5.13    52       5.10 Preprocessor1_Model1
+    #> 5 Fold01  5.13    59       5.10 Preprocessor1_Model1
+    #> 6 Fold01  5.13    63       5.11 Preprocessor1_Model1
+    #> # … with 2,336 more rows
