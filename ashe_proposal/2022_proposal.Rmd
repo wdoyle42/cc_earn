@@ -1,0 +1,56 @@
+---
+title: Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates
+author: "Will Doyle, Benjamin Skinner, Olivia Morales"
+subtitle: Proposal for ASHE 2022
+output: pdf_document
+bibliography: csc_research.bib
+csl: apa.csl
+---
+
+```{r setup, echo=F, include=F, message=F, warning=F, error=F}
+
+library(knitr)
+library(tidyverse)
+library(haven)
+library(bibtex)
+
+opts_chunk$set(error = FALSE,
+               echo = FALSE,
+               include = FALSE,
+               message = FALSE,
+               warning = FALSE,
+               out.width = "100%",          # figures should be as wide as margins
+               comment = NA)   
+```
+
+
+## Abstract  
+
+
+This project explores the capabilities of institutional variables in predicting  recent college graduates' earnings via machine-learning approaches. Precursory results support the predictive capabilities of expected institutional characteristics like school classification, while illuminating unexpected predictors like overall debt repayment rates on recent graduate earnings.
+
+
+\newpage
+
+## Objective/Background
+
+| The creation and publication of the College Scorecard by the U.S. Department of Education derived from President Obama's frustration with lack of institutional transparency as to rising costs and ultimate goal to increase college affordability and grow the U.S. middle class [@obama_2013]. The College Scorecard presented an opportunity for families to identify the institutions that provided the best outcomes for their students with the least amount of financial burden. Made publicly available in 2015, the data in the College Scorecard (while rich and vast in information), did not generally produce the kind of impact the Obama administration envisioned. In @hurwitz_student_2018, results indicated decision-making changes in generally well-resourced high school students after the publication of the Scorecard, directing their SAT scores to schools that, on average, had higher median earnings for graduates; the two other hallmarks of the Scorecard (graduation rates and average costs), produced virtually no change in SAT score-sending behaviors.
+|       Accompanied with the less than promising results from @huntington-klein_search_2017 on the impact of the College Scorecard release on subsequent college Google search activity, the Scorecard put forward a wealth of data that were simultaneously underutilized by the target demographic and generally underemployed by higher education researchers. While literature does exist engaging the earnings data and available on the Scorecard in particular institutional & program contexts [@boland_effect_2021; @elu_earnings_2019; @mabel_value_2020; @seaman_assessing_2017], the Scorecard is largely missing from literature and general higher education discourse on college affordability and broadening college access.
+|       This project fills a dire gap in higher education literature by not only utilizing the myriad institutional data points available on the Scorecard, but marrying these data with novel machine learning techniques that improve the predictive capacity of common institutional characteristics.
+
+## Methodology
+
+Our methodology is defined by machine-learning approaches to data analysis, characterized by the use of a model workflow, feature engineering for model use and elastic net/random forest regression models to appropriately fit our data and identify potential income predictors.
+
+## Data 
+
+| Data for this project originate from two specific sources: the College Scorecard and the most recent American Community Survey 5-year estimates (2016-2020), selecting 2019 data to align with the recent 2019-20 school year data featured in the Scorecard. The Scorecard provided us with our dependent variable data (median earnings for college graduates 1 year after graduation), and accompanied with the ACS county-level data, contributes the numerous possible predictors for our models.
+|     More specifically, the ACS county data feature FIPS codes to uniquely identify each county, calculations for: 1) the percentage of county bachelor's degree holders, 2) the percentage of homeowners in each county and 3) the percentage of individuals identified in the county labor force and the median household income for each county (for most recent 12 months, using 2019-adjusted dollars). The College Scorecard data present 2,000+ variables regarding institutional characteristics and program-level data for 6,700 accredited institutions in the U.S., including type of institution, degrees awarded, number of loan borrowers and the like. FIPS codes are also featured in this data set, allowing for appropriate matching of institutions to their location in each county first identified by the ACS data. Much of the Scorecard data based in more specific, individual student information were suppressed for privacy reasons.
+
+## Preliminary Findings
+
+## Study Significance
+
+\newpage
+
+# References
