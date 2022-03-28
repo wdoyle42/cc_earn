@@ -61,7 +61,7 @@ You may generate models that are statistically significant, but that doesn't nec
   - one should outline a clear goal for the model and how success with the model will be judged
   
   
-![Visualization of model-choosing process from tidymodels website](../modeling-process.png)
+![Visualization of model-choosing process from tidymodels website](tidymodels/modeling-process.png)
 Process for choosing appropriate model
 
 - Exploratory data analysis (EDA)
@@ -222,7 +222,7 @@ predict() function
 
 these features make the merging of predictions & original data much easier
 
-![The tidymodels mapping of prediction types and column names](../tidymodels_columns.png){width=50%}
+![The tidymodels mapping of prediction types and column names](tidymodels/tidymodels_columns.png){width=50%}
 &nbsp;
 
 other packages can be used with parsnip, list found [here](https://www.tidymodels.org/find/)
@@ -231,7 +231,7 @@ parsnip_addin() will provide a list of possible models for each model mode
 
 # A model workflow
 
-![Model equation](../model_equation.png){width=50%}
+![Model equation](tidymodels/model_equation.png){width=50%}
 
 Above is the typical structural equation for a linear model, including predictors (x) and outcome variable (y).
 
@@ -239,7 +239,7 @@ Above is the typical structural equation for a linear model, including predictor
 
 model workflow: pre-processing steps, model fit and potential post-processing activities
 
-![Correct mental model of where model estimation occurs in the data analysis process.](../model_workflow.png){width=50%}
+![Correct mental model of where model estimation occurs in the data analysis process.](tidymodels/model_workflow.png){width=50%}
 
 workflows package in R:
 
@@ -863,7 +863,7 @@ solution: resampling methods
 
 ## Resampling methods
 
-![Data splitting scheme from the initial data split to resampling.](../resampling_methods.png)
+![Data splitting scheme from the initial data split to resampling.](tidymodels/resampling_methods.png)
 resampling is conducted on the training set:
 
 - data is divided into two subsamples
@@ -877,7 +877,7 @@ most common: V-fold cross-validation
 - data are partitioned into V sets of roughly equal size (called "folds")
 - for example, in 3-fold validation, three iterations are created and one fold is held out for each iteration for assessment statistics
 
-![V-fold cross-validation data usage.](../cross_validation.png)
+![V-fold cross-validation data usage.](tidymodels/cross_validation.png)
 
 values of v should generally be larger in practice, most often 5 or 10
 
@@ -987,7 +987,7 @@ Example code:
 
 taking a bootstrap sample (i.e. sampling w/ replacement) that is the same size as the training set
 
-![Bootstrapping data usage.](../bootstrap.png)
+![Bootstrapping data usage.](tidymodels/bootstrap.png)
 Example code:
 
     bootstraps(ames_train, times = 5)
@@ -1008,7 +1008,7 @@ used when data has a time component (when models need to estimate seasonal/tempo
 
 - estimates model using historical data and evaluating with recent data
 
-![Data usage for rolling forecasting origin resampling.](../rolling_forecasting.png)
+![Data usage for rolling forecasting origin resampling.](tidymodels/rolling_forecasting.png)
 
 Example code:
 
@@ -1113,3 +1113,184 @@ to collect predictions from assessment set:
     #> 5 Fold01  5.13    59       5.10 Preprocessor1_Model1
     #> 6 Fold01  5.13    63       5.11 Preprocessor1_Model1
     #> # … with 2,336 more rows
+
+Example code (to compare observed and held-out predicted values):
+
+    assess_res %>% 
+      ggplot(aes(x = Sale_Price, y = .pred)) + 
+      geom_point(alpha = .15) +
+      geom_abline(color = "red") + 
+      coord_obs_pred() + 
+      ylab("Predicted")
+
+Example code (to isolate overpredicted data point): 
+
+    over_predicted <- 
+      assess_res %>% 
+      mutate(residual = Sale_Price - .pred) %>% 
+      arrange(desc(abs(residual))) %>% 
+      slice(1)
+    over_predicted
+
+    #> # A tibble: 1 × 6
+    #>   id     .pred  .row Sale_Price .config              residual
+    #>   <chr>  <dbl> <int>      <dbl> <chr>                   <dbl>
+    #> 1 Fold09  4.97    32       4.11 Preprocessor1_Model1   -0.858
+
+    ames_train %>% 
+      slice(over_predicted$.row) %>% 
+      select(Gr_Liv_Area, Neighborhood, Year_Built, Bedroom_AbvGr, Full_Bath)
+    #> # A tibble: 1 × 5
+    #>   Gr_Liv_Area Neighborhood Year_Built Bedroom_AbvGr Full_Bath
+    #>         <int> <fct>             <int>         <int>     <int>
+    #> 1         832 Old_Town           1923             2         1
+    
+Example code (for using a validation set instead of cross-validation):
+
+    val_res <- rf_wflow %>% fit_resamples(resamples = val_set)
+    val_res
+    #> # Resampling results
+    #> # Validation Set Split (0.75/0.25)  
+    #> # A tibble: 1 × 4
+    #>   splits             id         .metrics         .notes          
+    #>   <list>             <chr>      <list>           <list>          
+    #> 1 <split [1756/586]> validation <tibble [2 × 4]> <tibble [0 × 3]>
+
+    collect_metrics(val_res)
+    #> # A tibble: 2 × 6
+    #>   .metric .estimator   mean     n std_err .config             
+    #>   <chr>   <chr>       <dbl> <int>   <dbl> <chr>               
+    #> 1 rmse    standard   0.0695     1      NA Preprocessor1_Model1
+    #> 2 rsq     standard   0.843      1      NA Preprocessor1_Model1
+    
+## Parallel processing
+
+in tidymodels: the *tune* package uses the *foreach* package to do parallel computations
+
+- on a single computer, the # of possible "worker processes" is determined by the package *parallel*
+
+Example code:
+
+    # The number of physical cores in the hardware:
+parallel::detectCores(logical = FALSE)
+    #> [1] 2
+
+    # The number of possible independent processes that can 
+    # be simultaneously used:  
+    parallel::detectCores(logical = TRUE)
+    #> [1] 2
+
+need to use below code to register a parallel backend package and then execute parallel processing:
+
+    # Unix and macOS only
+    library(doMC)
+    registerDoMC(cores = 2)
+
+    # Now run fit_resamples()...
+    
+(you can use registerDoSEQ() to reset computations to sequential)
+
+alternative option, using network sockets:
+
+    # All operating systems
+    library(doParallel)
+
+    # Create a cluster object and then register: 
+    cl <- makePSOCKcluster(2)
+    registerDoParallel(cl)
+
+    # Now run fit_resamples()`...
+
+    stopCluster(cl)
+    
+*be aware of how parallel processing can slow down your computations considerably*
+
+## Saving the resampled objects
+
+models created during resampling are not typically saved, but there is an option to extract them (extract option in control_resamples())
+
+Example code:
+
+    ames_rec <- 
+      recipe(Sale_Price ~ Neighborhood + Gr_Liv_Area + Year_Built + Bldg_Type + 
+              Latitude + Longitude, data = ames_train) %>%
+      step_other(Neighborhood, threshold = 0.01) %>% 
+      step_dummy(all_nominal_predictors()) %>% 
+      step_interact( ~ Gr_Liv_Area:starts_with("Bldg_Type_") ) %>% 
+      step_ns(Latitude, Longitude, deg_free = 20)
+
+    lm_wflow <-  
+      workflow() %>% 
+      add_recipe(ames_rec) %>% 
+      add_model(linear_reg() %>% set_engine("lm")) 
+
+    lm_fit <- lm_wflow %>% fit(data = ames_train)
+
+    # Select the recipe: 
+    extract_recipe(lm_fit, estimated = TRUE)
+    #> Recipe
+    #> 
+    #> Inputs:
+    #> 
+    #>       role #variables
+    #>    outcome          1
+    #>  predictor          6
+    #> 
+    #> Training data contained 2342 data points and no missing data.
+    #> 
+    #> Operations:
+    #> 
+    #> Collapsing factor levels for Neighborhood [trained]
+    #> Dummy variables from Neighborhood, Bldg_Type [trained]
+    #> Interactions with Gr_Liv_Area:(Bldg_Type_TwoFmCon + Bldg_Type_Duplex + B... [trained]
+    #> Natural splines on Latitude, Longitude [trained]
+
+    get_model <- function(x) {
+      extract_fit_parsnip(x) %>% tidy()
+    }
+
+    # Test it using: 
+    # get_model(lm_fit)
+    
+extracting resampled fits:
+
+    ctrl <- control_resamples(extract = get_model)
+
+    lm_res <- lm_wflow %>%  fit_resamples(resamples = ames_folds, control = ctrl)
+    
+    lm_res
+    
+    #> # Resampling results
+    #> # 10-fold cross-validation 
+    #> # A tibble: 10 × 5
+    #>   splits             id     .metrics         .notes           .extracts       
+    #>   <list>             <chr>  <list>           <list>           <list>          
+    #> 1 <split [2107/235]> Fold01 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [1 × 2]>
+    #> 2 <split [2107/235]> Fold02 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [1 × 2]>
+    #> 3 <split [2108/234]> Fold03 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [1 × 2]>
+    #> 4 <split [2108/234]> Fold04 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [1 × 2]>
+    #> 5 <split [2108/234]> Fold05 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [1 × 2]>
+    #> 6 <split [2108/234]> Fold06 <tibble [2 × 4]> <tibble [0 × 3]> <tibble [1 × 2]>
+    #> # … with 4 more rows
+    
+getting replicates for a single predictor:
+
+    all_coef <- map_dfr(lm_res$.extracts, ~ .x[[1]][[1]])
+    
+    # Show the replicates for a single predictor:
+    
+    filter(all_coef, term == "Year_Built")
+    
+    #> # A tibble: 10 × 5
+    #>   term       estimate std.error statistic  p.value
+    #>   <chr>         <dbl>     <dbl>     <dbl>    <dbl>
+    #> 1 Year_Built  0.00180  0.000149      12.1 1.57e-32
+    #> 2 Year_Built  0.00180  0.000151      12.0 6.45e-32
+    #> 3 Year_Built  0.00185  0.000150      12.3 1.00e-33
+    #> 4 Year_Built  0.00183  0.000147      12.5 1.90e-34
+    #> 5 Year_Built  0.00184  0.000150      12.2 2.47e-33
+    #> 6 Year_Built  0.00180  0.000150      12.0 3.35e-32
+    #> # … with 4 more rows
+    
+# Comparing models with resampling
+
