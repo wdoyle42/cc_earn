@@ -40,7 +40,10 @@ This project explores the capabilities of institutional variables in predicting 
 
 ## Methodology
 
-Our methodology is defined by machine-learning approaches to data analysis, characterized by the use of a model workflow, feature engineering for model use and elastic net/random forest regression models to appropriately fit our data and identify potential income predictors.
+| Our methodology is defined by machine-learning approaches to data analysis, characterized by the use of a model workflow, feature engineering for model use and elastic net/random forest regression models to appropriately fit our data and identify potential income predictors.
+|     More specifically, we first read in and performed necessary preprocessing work to 1) drop data that were privacy suppressed/missing, 2) recode categorical data to workable dummy-coded variables and 3) drop zero variance/highly correlated predictors. 
+|     Next, we performed kfold cross validation (20 folds) on the training set data to set the foundation for model selection/evaluation. Two regression-based methods (elastic net and random forest) were then identified to build subsequent models, add models to built workflow and fit the models to resampled data. Model tuning was then performed for both models to ensure maximum predictive capacity.
+|     These methods resulted in predictive estimates for both the elastic net and random forest regression models critical to our ultimate analyses/findings.
 
 ## Data 
 
@@ -49,8 +52,12 @@ Our methodology is defined by machine-learning approaches to data analysis, char
 
 ## Preliminary Findings
 
+
+
 ## Study Significance
 
+
 \newpage
+
 
 # References
