@@ -13,16 +13,18 @@ library(knitr)
 library(tidyverse)
 library(haven)
 library(bibtex)
+library(ggridges)
+library(scales)
+library(here)
+library(janitor)
 
-opts_chunk$set(error = FALSE,
-               echo = FALSE,
-               include = FALSE,
-               message = FALSE,
-               warning = FALSE,
-               out.width = "100%",          # figures should be as wide as margins
-               comment = NA)   
+knitr::opts_chunk$set(echo = FALSE,warning = FALSE,include=TRUE,message = FALSE,fig.width=10,fig.height = 10)
+
 ```
 
+```{r}
+cb_df<-read_rds(here("data","cleaned","cb_df.Rds"))
+```
 
 ## Abstract  
 
@@ -52,12 +54,116 @@ This project explores the capabilities of institutional variables in predicting 
 
 ## Preliminary Findings
 
-
+| In our first 3 figures, we delineate the median first year earnings of different degree holders (Bachelors, Associates and Certificates/Diplomas). In looking at this figures descriptively, there seems to be an increase in earnings potential for Bachelors degree holders as compared to Associates/Certificate degree holders in similar fields of study. However, this conclusion necessitates further analyses to determine the predictive capabilities of things other than field of study (institutional characteristics, student traits, etc.) in determining the incomes of recent college graduates.
+|     Both the elastic net and random forest regression models produced estimates to inform the predictive capabilities of certain program/institutional characteristics. Figure 4 demonstrates those estimates from elastic net, identifying typically assumed positive predictors of income like type of school, type of degree/credential; however, this model also illuminated particularly unexpected predictors like outstanding Federal loan balance and median debt for graduated students.
+|   In our random forest regression model (Figure 5), we see a similar emphasis on the importance of type of degree credential (specifically Certificates/Diplomas and Bachelors Degrees); we also see the importance of median family income and average family income for those students considered independents (both income values in real 2015 dollars). Unexpected, however, were the appearances of 3-year cohort default rates and the percentage of students who completed their coursework within 8 years at the original institution (Satisfactory Academic Progress). 
 
 ## Study Significance
 
 
 \newpage
 
+```{r}
+cb_df<-read_rds(here("data","cleaned","cb_df.Rds"))
+```
+
+# Figures
+
+## Figure 1 
+
+### First Year Earnings of Bachelor's Degree Holders
+
+```{r}
+cb_df%>%
+  group_by(cipdesc,creddesc)%>%
+  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
+  mutate(count=n())%>%
+  filter(count>20)%>%
+  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
+  group_by(creddesc)%>%
+  arrange(creddesc,desc(mean_earn)) %>% 
+  mutate(earn_rank=rank(-mean_earn))%>%
+  filter(earn_rank<2000)%>%
+  filter(creddesc=="Bachelors Degree")%>%
+  ggplot(aes(x=earn_mdn_hi_1yr,
+             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
+  geom_density_ridges()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  ylab("")+
+  xlab("")+
+  scale_x_continuous(labels=dollar_format())
+```
+
+\newpage
+
+## Figure 2
+
+### First Year Earnings of Associate Degree Holders
+```{r}
+cb_df%>%
+  group_by(cipdesc,creddesc)%>%
+  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
+  mutate(count=n())%>%
+  filter(count>20)%>%
+  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
+  group_by(creddesc)%>%
+  arrange(creddesc,desc(mean_earn)) %>% 
+  mutate(earn_rank=rank(-mean_earn))%>%
+  filter(earn_rank<2000)%>%
+  filter(creddesc=="Associate's Degree")%>%
+  ggplot(aes(x=earn_mdn_hi_1yr,
+             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
+  geom_density_ridges()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  ylab("")+
+  xlab("")+
+  scale_x_continuous(labels=dollar_format())
+```
+\newpage
+
+## Figure 3
+
+### First Year Earnings of Certificate Holders
+```{r}
+cb_df%>%
+  group_by(cipdesc,creddesc)%>%
+  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
+  mutate(count=n())%>%
+  filter(count>20)%>%
+  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
+  group_by(creddesc)%>%
+  arrange(creddesc,desc(mean_earn)) %>% 
+  mutate(earn_rank=rank(-mean_earn))%>%
+  filter(earn_rank<2000)%>%
+  filter(creddesc=="Undergraduate Certificate or Diploma")%>%
+  ggplot(aes(x=earn_mdn_hi_1yr,
+             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
+  geom_density_ridges()+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  ylab("")+
+  xlab("")+
+  scale_x_continuous(labels=dollar_format())
+```
+
+\newpage
+
+## Figure 4 
+
+### Elastic Net Estimates
+
+
+```{r}
+
+load("../scripts/enet_vi.Rdata")
+
+gg
+```
+
+## Figure 5
+
+\newpage 
 
 # References
