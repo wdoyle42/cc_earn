@@ -38,6 +38,7 @@ This project explores the capabilities of institutional variables in predicting 
 
 | The creation and publication of the College Scorecard by the U.S. Department of Education derived from President Obama's frustration with lack of institutional transparency as to rising costs and ultimate goal to increase college affordability and grow the U.S. middle class [@obama_2013]. The College Scorecard presented an opportunity for families to identify the institutions that provided the best outcomes for their students with the least amount of financial burden. Made publicly available in 2015, the data in the College Scorecard (while rich and vast in information), did not generally produce the kind of impact the Obama administration envisioned. In @hurwitz_student_2018, results indicated decision-making changes in generally well-resourced high school students after the publication of the Scorecard, directing their SAT scores to schools that, on average, had higher median earnings for graduates; the two other hallmarks of the Scorecard (graduation rates and average costs), produced virtually no change in SAT score-sending behaviors.
 |       Accompanied with the less than promising results from @huntington-klein_search_2017 on the impact of the College Scorecard release on subsequent college Google search activity, the Scorecard put forward a wealth of data that were simultaneously underutilized by the target demographic and generally underemployed by higher education researchers. While literature does exist engaging the earnings data and available on the Scorecard in particular institutional & program contexts [@boland_effect_2021; @elu_earnings_2019; @mabel_value_2020; @seaman_assessing_2017], the Scorecard is largely missing from literature and general higher education discourse on college affordability and broadening college access.
+|       Machine learning, as an academic field of study, shares much in common with the vastly growing discipline marrying both statistical methods and computer science. While commonly associated with convoluted computational statistics and computer programming methods, it has crept into the education (particularly higher education) field to increase model accuracy and potential estimates in quantitative higher education studies. In particular, the last 6-7 years have seen an uptick in higher education research projects utilizing machine learning methods [@aulck2017predicting; @savvas_etal_2021; @Zeineddine_2021].With this increase in prominence, how does this project stand out?
 |       This project fills a dire gap in higher education literature by not only utilizing the myriad institutional data points available on the Scorecard, but marrying these data with novel machine learning techniques that improve the predictive capacity of common institutional characteristics.
 
 ## Methodology
@@ -59,6 +60,9 @@ This project explores the capabilities of institutional variables in predicting 
 |   In our random forest regression model (Figure 5), we see a similar emphasis on the importance of type of degree credential (specifically Certificates/Diplomas and Bachelors Degrees); we also see the importance of median family income and average family income for those students considered independents (both income values in real 2015 dollars). Unexpected, however, were the appearances of 3-year cohort default rates and the percentage of students who completed their coursework within 8 years at the original institution (Satisfactory Academic Progress). 
 
 ## Study Significance
+
+| While the technical nature of machine learning approaches can seem far removed from the higher education policy landscape at large, this study, at its foundation, cares about the material outcomes for students investing their money and time in their educational futures. More specifically, we are preoccupied with identifying the greatest predictors of college graduates' incomes to ultimately inform good policy & practice that amplifies positive student earnings potential.
+|   Machine learning has incredible potential in providing the most accurate estimates of the data points we as higher education practitioners/researchers care so deeply about: student outcomes. It is evident that the integration of machine learning to higher education research methods/practice has already begun, and this project adds to this movement and solidifies its place in the higher education policy landscape. 
 
 
 \newpage
@@ -157,12 +161,19 @@ cb_df%>%
 
 ```{r}
 
-load("../scripts/enet_vi.Rdata")
+load("~/enet_vi.Rdata")
 
 gg
 ```
 
 ## Figure 5
+
+```{r}
+
+#load("../scripts/rf_vi.Rdata")
+
+#gg
+```
 
 \newpage 
 
