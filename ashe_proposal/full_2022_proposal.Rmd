@@ -1,0 +1,20 @@
+---
+title: Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates
+author: "Will Doyle, Benjamin Skinner, Olivia Morales"
+subtitle: Proposal for ASHE 2022
+output: pdf_document
+bibliography: csc_research.bib
+csl: apa.csl
+---
+
+```{r child = '2022_proposal_writing.Rmd'}
+```
+
+\newpage
+
+```{r child = 'var_list_ashe.Rmd'}
+```
+
+\newpage
+
+# References
