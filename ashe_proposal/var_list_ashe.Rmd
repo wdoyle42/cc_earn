@@ -20,42 +20,42 @@ opts_chunk$set(error = FALSE,
                comment = NA)      
 ```
 
-# Figure Variable Names
+# Table 1: Description of variables used in figures
 
-&nbsp; | Name of Variable | Description         
--------|----------------  |--------------------------------------
-&nbsp; | sch_deg          | Predominant degree awarded (recoded 0s and 4s)
-&nbsp; | iclevel          | Level of the institution (2-year)
-&nbsp; | lpstafford_amt   | Total outstanding federal Direct Loan balance
-&nbsp; | creddesc         | Text description of the level of credential
-&nbsp; | dbrr1_fed_ug_rt  | Undergraduate federal student loan dollar-based 1-year repayment rate
-&nbsp; | pcip51           | Percentage of degrees awarded in Health Professions and Related Programs
-&nbsp; | grad_debt_mdn10yr| Median debt of completers expressed in 10-year monthly payments, suppressed for n=30
-&nbsp; | age_entry        | Average of the age of entry squared
-&nbsp; | faminc_ind       | Average of the log of family income for independent students
-&nbsp; | high_deg         | Highest degree awarded
-&nbsp; | lpstafford_cnt   | Number of borrowers with outstanding federal Direct Loan balances
-&nbsp; | preddeg          | Predominant undergraduate degree awarded
-&nbsp; | married          | Share of married students
-&nbsp; | ugds_women       | Total share of enrollment of undergraduate degree-seeking students who are women
-&nbsp; | md_faminc        | Median family income in real 2015 dollars
-&nbsp; | inc_pct_m1       | Independent students with family incomes between $30,001-$48,000 in nominal dollars
-&nbsp; | control          | Control of institution, per PEPS
-&nbsp; | female           | Percent of female students who transferred to a 2-year institution and were still enrolled within 2 years
-&nbsp; | pftftug1_ef      | Share of entering undergraduate students who are first-time, full-time degree-/certificate-seeking undergraduate students
-&nbsp; | poolyrs100       | Years used for rolling averages of completion rate C100_[4/L4]_POOLED
-&nbsp; | cdr3             | Number of students in the cohort for the three-year cohort default rate
-&nbsp; | first_gen        | Percent of first-generation students who transferred to a 2-year institution and were still enrolled within 2 years
-&nbsp; | bbrr2_fed_ug_    | Percentage of undergraduate federal student loan 
-&nbsp; | makeprog_supp    | borrowers making progress after 2 years, suppressed for n<30                  
-&nbsp; | comp_orig_yr8_rt | Percent of students who never received a Pell Grant at the institution and who completed in 8 years at original institution
-&nbsp; | cdr2             | Number of students in the cohort for the two-year cohort default rate
-&nbsp; | ug25abv          | Percentage of undergraduates aged 25 and above
-&nbsp; | comp_orig_yr3_rt | Percent of students who never received a Pell Grant at the institution and who completed in 3 years at original institution
-&nbsp; | rpy_3yr_rt_supp  | 3-year repayment rate for no-Pell students, suppressed for n=30
-&nbsp; | ugds_asian       | Total share of enrollment of undergraduate degree-seeking students who are Asian
-&nbsp; | opeid6           | 6-digit OPE ID for institution
-&nbsp; | bbrr2_fed_ug_fbr_supp | Percentage of undergraduate federal student loan borrowers in forbearance after 2 years, suppressed for n<30
+| Name of Variable          | Description                                                                                                                 |
+|:--------------------------|:----------------------------------------------------------------------------------------------------------------------------|
+| sch\_deg                  | Predominant degree awarded (recoded 0s and 4s)                                                                              |
+| iclevel                   | Level of the institution (2-year)                                                                                           |
+| lpstafford\_amt           | Total outstanding federal Direct Loan balance                                                                               |
+| creddesc                  | Text description of the level of credential                                                                                 |
+| dbrr1\_fed\_ug\_rt        | Undergraduate federal student loan dollar-based 1-year repayment rate                                                       |
+| pcip51                    | Percentage of degrees awarded in Health Professions and Related Programs                                                    |
+| grad\_debt\_mdn10yr       | Median debt of completers expressed in 10-year monthly payments, suppressed for n=30                                        |
+| age\_entry                | Average of the age of entry squared                                                                                         |
+| faminc\_ind               | Average of the log of family income for independent students                                                                |
+| high\_deg                 | Highest degree awarded                                                                                                      |
+| lpstafford\_cnt           | Number of borrowers with outstanding federal Direct Loan balances                                                           |
+| preddeg                   | Predominant undergraduate degree awarded                                                                                    |
+| married                   | Share of married students                                                                                                   |
+| ugds\_women               | Total share of enrollment of undergraduate degree-seeking students who are women                                            |
+| md\_faminc                | Median family income in real 2015 dollars                                                                                   |
+| inc\_pct\_m1              | Independent students with family incomes between $30,001-$48,000 in nominal dollars                                         |
+| control                   | Control of institution, per PEPS                                                                                            |
+| female                    | Percent of female students who transferred to a 2-year institution and were still enrolled within 2 years                   |
+| pftftug1\_ef              | Share of entering undergraduate students who are first-time, full-time degree-/certificate-seeking undergraduate students   |
+| poolyrs100                | Years used for rolling averages of completion rate C100\_[4/L4]\_POOLED                                                     |
+| cdr3                      | Number of students in the cohort for the three-year cohort default rate                                                     |
+| first\_gen                | Percent of first-generation students who transferred to a 2-year institution and were still enrolled within 2 years         |
+| bbrr2\_fed\_ug\_          | Percentage of undergraduate federal student loan                                                                            |
+| makeprog\_supp            | borrowers making progress after 2 years, suppressed for n<30                                                                |
+| comp\_orig\_yr8\_rt       | Percent of students who never received a Pell Grant at the institution and who completed in 8 years at original institution |
+| cdr2                      | Number of students in the cohort for the two-year cohort default rate                                                       |
+| ug25abv                   | Percentage of undergraduates aged 25 and above                                                                              |
+| comp\_orig\_yr3\_rt       | Percent of students who never received a Pell Grant at the institution and who completed in 3 years at original institution |
+| rpy\_3yr\_rt\_supp        | 3-year repayment rate for no-Pell students, suppressed for n=30                                                             |
+| ugds\_asian               | Total share of enrollment of undergraduate degree-seeking students who are Asian                                            |
+| opeid6                    | 6-digit OPE ID for institution                                                                                              |
+| bbrr2\_fed\_ug\_fbr\_supp | Percentage of undergraduate federal student loan borrowers in forbearance after 2 years, suppressed for n<30                |
 
 
 
