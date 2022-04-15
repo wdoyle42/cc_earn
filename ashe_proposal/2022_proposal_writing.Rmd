@@ -44,21 +44,17 @@ The broad objective of this project involves the prediction of program earnings 
 The creation and publication of the College Scorecard by the
 U.S. Department of Education presented an opportunity for families to identify the institutions that provided the best labor outcomes for their students with the least amount of financial burden [@obama_2013]. Made publicly available in 2015, the data in the College Scorecard (while illuminating varied institutional characteristics), did not generally produce the kind of impact the Obama administration envisioned and went mostly underutilized. It also fell short of providing complete data profiles of institutional/program characteristics, as much of the data eventually published were missing or privacy suppressed.
 
-Despite its shortcomings, the College Scorecard data has been used in conjunction with common econometric approaches to evaluate student responsiveness to the Scorecard. In particular, @hurwitz_student_2018 utilizes a DID model that demonstrates the decision-making changes in generally well-resourced high school
+Despite its shortcomings, the College Scorecard data have been used in conjunction with common econometric approaches to evaluate student responsiveness to the Scorecard. In particular, @hurwitz_student_2018 utilizes a DID model that demonstrates the decision-making changes in generally well-resourced high school
 students after the publication of the Scorecard, directing their SAT
 scores to schools that, on average, had higher median earnings for
 graduates; the two other hallmarks of the Scorecard (graduation rates
 and average costs), produced virtually no change in SAT score-sending
 behaviors. Other higher education/economics researchers have adopted econometric methodological approaches while engaging the earnings data
-and available on the Scorecard in particular institutional & program
+available on the Scorecard in particular institutional & program
 contexts [@boland_effect_2021; @elu_earnings_2019; @mabel_value_2020;
-@seaman_assessing_2017], but its important to highlight the tendency of econometric methods to misspecify models & lend itself to selector/researcher bias [@Imbens_2004].
+@seaman_assessing_2017]. It's important, however, to highlight the tendency of econometric methods to misspecify models & lend itself to selector/researcher bias [@Imbens_2004].
 
-Machine learning, in contrast, provides the computer/algorithms to determine the model & subsequent training/model accuracy. While commonly associated with convoluted computational statistics and computer programming methods, it has
-crept into the education (particularly higher education) field to
-increase model accuracy and potential estimates in quantitative higher
-education studies. In particular, the last 6-7 years have seen an
-uptick in higher education research projects utilizing machine
+Machine learning, in contrast, allows the computer & corresponding algorithms to determine the model & ultimately train the model to promote increased accuracy. While commonly associated with convoluted computational statistics and computer programming methods, it has crept into the education (particularly higher education) field to bolster model accuracy and potential estimates in quantitative higher education studies. In particular, the last 6-7 years have seen an uptick in higher education research projects utilizing machine
 learning methods [@aulck2017predicting; @savvas_etal_2021;
 @Zeineddine_2021]. With this increase in prominence, how does this
 project stand out?
@@ -89,8 +85,7 @@ Next, we perform kfold cross validation (20 folds) on the training
 set data to set the foundation for model selection/evaluation. Two
 regression-based methods (elastic net and random forest) are utilized
 to build subsequent models, add models to built workflow and fit the models to resampled data. We then perform tuning for both models to ensure maximum predictive capacity. The two identified models, elastic net regularization 
-and random forest regression, are particularly useful in our project, as they provide for 1) principled predictor selection from a large set of possible determinants of earnings and 2) identification of non-linear relationships between predictors. Elastic net regularization is an improved version of the LASSO method that combines penalties to remove non-predictive coefficients. Random forest regression produce variable cases and forces a vote on the most
-likely outcome for the covariate in question.
+and random forest regression, are particularly useful in our project, as they provide for 1) principled predictor selection from a large set of possible determinants of earnings and 2) identification of non-linear relationships between predictors. Elastic net regularization is an improved version of the LASSO method that combines penalties to remove non-predictive coefficients. Random forest regression models produce variable cases and forces a vote on the most likely outcome for the covariate in question.
 
 These methods result in predictive estimates for both the elastic
 net and random forest regression models critical to our ultimate
@@ -122,13 +117,13 @@ The College Scorecard data present 2,000+ variables featuring institutional char
 borrowers and the like. FIPS codes are also featured in this data set,
 allowing for appropriate matching of institutions to their location in
 each county first identified by the ACS data. Much of the Scorecard
-data based in more specific, individual student information were suppressed for privacy reasons; however, this provided us an opportunity to recover lost information via the ACS data available and other variables in the Scorecard that were not suppressed to use in our analyses.
+data based in more specific, individual student information were suppressed for privacy reasons; however, this provided us an opportunity to recover lost information via the ACS data and other variables in the Scorecard that were not suppressed to use in our analyses.
 
 ## Preliminary Findings
 
 In our first 3 figures, we delineate the median first year earnings of
 different degree holders (Bachelors, Associates and
-Certificates/Diplomas). In looking at this figures descriptively, we
+Certificates/Diplomas). In looking at these figures descriptively, we
 find an increase in earnings potential for Bachelors degree holders as
 compared to Associates/Certificate degree holders in similar fields of
 study. However, this conclusion necessitates further analyses to
@@ -139,10 +134,10 @@ determining the incomes of recent college graduates.
 Both the elastic net and random forest regression models produced
 estimates to inform the predictive capabilities of certain
 program/institutional characteristics. Figure 4 demonstrates those
-estimates from elastic net, identifying typically assumed positive
+estimates from the elastic net model, identifying typically assumed positive
 predictors of income like type of school, type of degree/credential;
 however, this model also illuminated particularly unexpected
-predictors like outstanding Federal loan balance and median debt for
+predictors like outstanding federal loan balance and median debt for
 graduated students.
 
 In our random forest regression model (Figure 5), we see a similar
@@ -175,7 +170,10 @@ education research methods/practice has already begun, and this
 project adds to this movement and solidifies its place in the higher
 education policy landscape. 
 
-Ultimately, this project serves not only as a new venture that coalesces machine learning and higher education research to estimate student earnings, but provides more accurate estimates of said earnings than would otherwise be achieved through typical econometric approaches. These improved estimates are paramount to the creation and support of enhanced policy approaches that focus on supporting existing successful programs/institutions and identifying areas of development.
+Ultimately, this project serves not only as a new venture that coalesces 
+machine learning and higher education research to estimate student earnings, 
+but provides more accurate estimates of said earnings than would otherwise be achieved through typical econometric approaches. These improved estimates are paramount to the creation and support of enhanced policy approaches that focus 
+on supporting existing successful programs/institutions and identifying areas of development.
 
 
 \newpage
