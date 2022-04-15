@@ -55,7 +55,8 @@ opts_chunk$set(error = FALSE,
 | rpy\_3yr\_rt\_supp        | 3-year repayment rate for no-Pell students, suppressed for n=30                                                             |
 | ugds\_asian               | Total share of enrollment of undergraduate degree-seeking students who are Asian                                            |
 | opeid6                    | 6-digit OPE ID for institution                                                                                              |
-| bbrr2\_fed\_ug\_fbr\_supp | Percentage of undergraduate federal student loan borrowers in forbearance after 2 years, suppressed for n<30                |
+| bbrr2\_fed\_ug\_          | Percentage of undergraduate federal student loan 
+| fbr\_supp                 | borrowers in forbearance after 2 years, suppressed for n<30                
 
 
 
