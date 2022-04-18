@@ -1,90 +1,109 @@
 ---
 title: Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates
-subtitle: Proposal for ASHE 2022
-output: pdf_document
+subtitle: |
+  | 
+  | Proposal for ASHE 2022
+abstract: |
+  \noindent Using a principled machine-learning approach, we predict recent
+  college graduates' earnings using data from the College
+  Scorecard. Early results support the predictive capabilities of
+  institutional characteristics like school classification and overall
+  debt repayment rates on recent graduate earnings.
+geometry: margin=1in
+fontsize: 12pt
 bibliography: csc_research.bib
 csl: apa.csl
+figPrefix:
+  - "Figure"
+  - "Figures"
+tblPrefix:
+  - "Table"
+  - "Tables"
+eqnPrefix:
+  - "equation"
+  - "equations"
+header-includes:
+  - \usepackage[T1]{fontenc}
+  - \usepackage[utf8]{inputenc}
+  - \usepackage{dsfont}
+  - \usepackage{amstext}
+  - \usepackage{amssymb}
+  - \usepackage{amsmath}
+  - \usepackage{mathptmx}
+  - \usepackage[american]{babel}
+  - \usepackage{setspace}
+  - \usepackage{appendix}
+  - \usepackage{tabularx}
+  - \usepackage{booktabs}
+  - \usepackage{caption}
+  - \captionsetup{singlelinecheck=off,font=small,labelfont=bf}
+  - \usepackage[nolists,tablesfirst,nomarkers]{endfloat}
+  - \newcommand{\RR}{\raggedright\arraybackslash}
+  - \newcommand{\RL}{\raggedleft\arraybackslash}
+  - \newcommand{\CC}{\centering\arraybackslash}
+  - \setlength{\parindent}{2em}
+  - \setlength{\parskip}{0em}
 ---
 
-```{r setup, echo=F, include=F, message=F, warning=F, error=F}
-
-libs <- c("tidyverse", "janitor", "scales", "bibtex", "ggridges", "haven", "knitr", "rmarkdown", "here")
-
-sapply(libs, require, character.only = TRUE)
-
-knitr::opts_chunk$set(echo = FALSE,
-                      warning = FALSE,
-                      include = TRUE,
-                      message = FALSE,
-                      fig.width = 10,
-                      fig.height = 10)
-
-```
-
-
-```{r}
-cb_df <- read_rds(here("data","cleaned","cb_df.Rds"))
-```
-
-## Abstract  
-
-Using a principled machine-learning approach, we predict recent
-college graduates' earnings using data from the College
-Scorecard. Early results support the predictive capabilities of
-institutional characteristics like school classification and overall
-debt repayment rates on recent graduate earnings.
-
+<!-- first page settings -->
+\thispagestyle{empty}
 \newpage
+<!-- \doublespacing --> 
 
-## Objective/Background
+# Objective/Background
 
-The broad objective of this project involves the prediction of program
-earnings for recent college graduates using common
-institutional/program variables available via the College Scorecard
-website. Econometric approaches to predicting earnings after
-graduation are not uncommon in the higher education literature, as
-many researchers in the field have attempted to support college-going
-behavior due to its generous return on
-investment. @Oreopoulous_Petronijevic_2013 take a comprehensive look
-at the research available on market returns to higher education,
-reviewing 30 years of literature that ultimately demonstrate an
-economic advantage & higher earnings potential for those individuals
-with a college education. However, @Carnevale_etal_2011 notes an
-important caveat for this general earnings boost: the potential
-earnings increase depends on the type of degree/credential earned,
-program of study, etc.
+<!-- The broad objective of this project involves the prediction of program -->
+<!-- earnings for recent college graduates using common -->
+<!-- institutional/program variables available via the College Scorecard -->
+<!-- website. -->
+
+Econometric approaches to predicting earnings after graduation are not
+uncommon in the higher education literature, as many researchers in
+the field have attempted to support college-going behavior due to its
+generous return on investment [@doyle2016educearn; @card:1995;
+@Card:1999; @Card:2001;
+@Oreopoulous_Petronijevic_2013]. @Oreopoulous_Petronijevic_2013 take a
+comprehensive look at the research available on market returns to
+higher education, reviewing 30 years of literature that ultimately
+demonstrate an economic advantage and higher earnings potential for
+those individuals with a college education. @Carnevale_etal_2011,
+however, note an important caveat for this general earnings boost: the
+potential earnings increase depends on the type of degree/credential
+earned and program of study.
 
 The creation and publication of the College Scorecard by the
 U.S. Department of Education presented an opportunity for families to
 identify the institutions that provided the best labor outcomes for
 their students with the least amount of financial burden
-[@obama_2013]. Made publicly available in 2015, the data in the
-College Scorecard (while illuminating varied institutional
-characteristics), did not generally produce the kind of impact the
-Obama administration envisioned and went mostly underutilized. It also
-fell short of providing complete data profiles of
-institutional/program characteristics, as much of the data eventually
-published were missing or privacy suppressed.
+[@obama_2013]. While illuminating varied institutional characteristics
+when it was first made publicly available in 2015, the data in the
+College Scorecard did not generally produce the kind of impact the
+Obama administration envisioned and went mostly underutilized by
+consumers [@huntington2016search]. It also fell short of providing
+complete data profiles of institutional/program characteristics, as
+much of the published data were missing or privacy suppressed due to
+small program sizes and concerns over confidentiality.
 
 Despite its shortcomings, the College Scorecard data have been used in
 conjunction with common econometric approaches to evaluate student
-responsiveness to the Scorecard. In particular, @hurwitz_student_2018
-utilizes a DID model that demonstrates the decision-making changes in
-generally well-resourced high school students after the publication of
-the Scorecard, directing their SAT scores to schools that, on average,
-had higher median earnings for graduates; the two other hallmarks of
-the Scorecard (graduation rates and average costs), produced virtually
-no change in SAT score-sending behaviors. Other higher
-education/economics researchers have adopted econometric
-methodological approaches while engaging the earnings data available
-on the Scorecard in particular institutional & program contexts
-[@boland_effect_2021; @elu_earnings_2019; @mabel_value_2020;
-@seaman_assessing_2017]. It's important, however, to highlight the
-tendency of econometric methods to misspecify models & lend itself to
-selector/researcher bias [@Imbens_2004].
+responsiveness to the kinds of college choice information provided by
+the Scorecard. @hurwitz_student_2018 employ a DID framework to show
+how college decision-making changed among students from generally
+well-resourced high schools after the publication of the Scorecard,
+directing their SAT scores to schools that, on average, had higher
+median earnings for graduates. At the same time, two other hallmarks
+of the Scorecard---graduation rates and average costs---produced
+virtually no change in SAT score-sending behaviors. Other researchers
+have used econometrics-based methodological approaches while engaging
+the earnings data available on the Scorecard in particular
+institutional and program contexts [@boland_effect_2021;
+@elu_earnings_2019; @mabel_value_2020; @seaman_assessing_2017]. 
 
-Machine learning, in contrast, allows the computer & corresponding
-algorithms to determine the model & ultimately train the model to
+With this growing literature, it remains important to highlight the
+ways common econometric approaches may lead to misspecified models and
+researcher bias [@Imbens_2004]. Approaches based in data science and
+machine learning, in contrast, allow the computer and corresponding
+algorithms to determine the model and ultimately train the model to
 promote increased accuracy. While commonly associated with convoluted
 computational statistics and computer programming methods, it has
 crept into the education (particularly higher education) field to
@@ -102,8 +121,7 @@ techniques that improve the predictive capacity of common
 institutional characteristics in determining potential graduate
 earnings.
 
-
-## Methodology
+# Methodology
 
 Our methodology is defined by machine-learning approaches to data
 analysis, characterized by the use of a model workflow, feature
@@ -139,8 +157,7 @@ Scorecard dataset that are highly predictive indicators of our
 dependent variable: median earnings from graduates of the program
 after 1 year.
 
-
-## Data 
+# Data 
 
 Data for this project originate from two specific sources: the College
 Scorecard and the most recent American qCommunity Survey 5-year
@@ -170,7 +187,7 @@ however, this provided us an opportunity to recover lost information
 via the ACS data and other variables in the Scorecard that were not
 suppressed to use in our analyses.
 
-## Preliminary Findings
+# Preliminary Findings
 
 In our first 3 figures, we delineate the median first year earnings of
 different degree holders (Bachelors, Associates and
@@ -201,8 +218,7 @@ default rates and the percentage of students who completed their
 coursework within 8 years at the original institution (Satisfactory
 Academic Progress).
 
-
-## Study Significance
+# Study Significance
 
 While the technical nature of machine learning approaches can seem far
 removed from the higher education policy landscape at large, this
@@ -230,111 +246,5 @@ support of enhanced policy approaches that focus on supporting
 existing successful programs/institutions and identifying areas of
 development.
 
+# References
 
-\newpage
-
-# Figures
-
-## Figure 1 
-
-### First Year Earnings of Bachelor's Degree Holders
-
-```{r}
-cb_df%>%
-  group_by(cipdesc,creddesc)%>%
-  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
-  mutate(count=n())%>%
-  filter(count>20)%>%
-  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
-  group_by(creddesc)%>%
-  arrange(creddesc,desc(mean_earn)) %>% 
-  mutate(earn_rank=rank(-mean_earn))%>%
-  filter(earn_rank<2000)%>%
-  filter(creddesc=="Bachelors Degree")%>%
-  ggplot(aes(x=earn_mdn_hi_1yr,
-             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
-  geom_density_ridges()+
-  theme_minimal()+
-  theme(legend.position = "none")+
-  ylab("")+
-  xlab("")+
-  scale_x_continuous(labels=dollar_format())
-```
-
-\newpage
-
-## Figure 2
-
-### First Year Earnings of Associate Degree Holders
-```{r}
-cb_df%>%
-  group_by(cipdesc,creddesc)%>%
-  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
-  mutate(count=n())%>%
-  filter(count>20)%>%
-  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
-  group_by(creddesc)%>%
-  arrange(creddesc,desc(mean_earn)) %>% 
-  mutate(earn_rank=rank(-mean_earn))%>%
-  filter(earn_rank<2000)%>%
-  filter(creddesc=="Associate's Degree")%>%
-  ggplot(aes(x=earn_mdn_hi_1yr,
-             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
-  geom_density_ridges()+
-  theme_minimal()+
-  theme(legend.position = "none")+
-  ylab("")+
-  xlab("")+
-  scale_x_continuous(labels=dollar_format())
-```
-\newpage
-
-## Figure 3
-
-### First Year Earnings of Certificate Holders
-```{r}
-cb_df%>%
-  group_by(cipdesc,creddesc)%>%
-  select(earn_mdn_hi_1yr,creddesc,cipdesc)%>%
-  mutate(count=n())%>%
-  filter(count>20)%>%
-  mutate(mean_earn=mean(earn_mdn_hi_1yr,na.rm=TRUE))%>%
-  group_by(creddesc)%>%
-  arrange(creddesc,desc(mean_earn)) %>% 
-  mutate(earn_rank=rank(-mean_earn))%>%
-  filter(earn_rank<2000)%>%
-  filter(creddesc=="Undergraduate Certificate or Diploma")%>%
-  ggplot(aes(x=earn_mdn_hi_1yr,
-             y=fct_reorder(cipdesc,.x=mean_earn),fill=cipdesc))+
-  geom_density_ridges()+
-  theme_minimal()+
-  theme(legend.position = "none")+
-  ylab("")+
-  xlab("")+
-  scale_x_continuous(labels=dollar_format())
-```
-
-\newpage
-
-## Figure 4 
-
-### Elastic Net Estimates
-
-
-```{r}
-
-load("../scripts/enet_vi.Rdata")
-
-gg
-```
-
-
-
-\newpage
-
-
-## Figure 5
-
-### Random Forest Regression: Variable Importance
-
-![](../figures/rf_vi.png)
