@@ -52,11 +52,6 @@ header-includes:
 
 # Objective/Background
 
-<!-- The broad objective of this project involves the prediction of program -->
-<!-- earnings for recent college graduates using common -->
-<!-- institutional/program variables available via the College Scorecard -->
-<!-- website. -->
-
 Econometric approaches to predicting earnings after graduation are not
 uncommon in the higher education literature, as many researchers in
 the field have attempted to support college-going behavior due to its
@@ -99,81 +94,89 @@ the earnings data available on the Scorecard in particular
 institutional and program contexts [@boland_effect_2021;
 @elu_earnings_2019; @mabel_value_2020; @seaman_assessing_2017]. 
 
-With this growing literature, it remains important to highlight the
+With this growing literature, it remains important to consider the
 ways common econometric approaches may lead to misspecified models and
-researcher bias [@Imbens_2004]. Approaches based in data science and
-machine learning, in contrast, allow the computer and corresponding
-algorithms to determine the model and ultimately train the model to
-promote increased accuracy. While commonly associated with convoluted
-computational statistics and computer programming methods, it has
-crept into the education (particularly higher education) field to
-bolster model accuracy and potential estimates in quantitative higher
-education studies. In particular, the last 6-7 years have seen an
-uptick in higher education research projects utilizing machine
-learning methods [@aulck2017predicting; @savvas_etal_2021;
-@Zeineddine_2021]. With this increase in prominence, how does this
-project stand out?
+unintentional researcher bias [@Imbens_2004]. Approaches based in data
+science and machine learning, in contrast, often follow structured
+procedures and computational algorithms to build, test, and train the
+model [@Hastie_etal_2016]. While historically associated with
+computational and statistics and computer programming methods, tools
+of data science and machine learning have been increasingly used among
+higher education researchers [@skinner2021civic; @aulck2017predicting;
+@savvas_etal_2021; @Zeineddine_2021].
 
-This project fills a dire gap in higher education literature by not
-only utilizing the myriad institutional data points available on the
-Scorecard, but marrying these data with novel machine learning
-techniques that improve the predictive capacity of common
-institutional characteristics in determining potential graduate
-earnings.
+In this project, we use the tools and procedures of data science and
+common institutional/program variables available via the College
+Scorecard to provide robust predictions of program earnings for recent
+college graduates. This work supports future higher education research
+in two key ways. First, we offer an example of a principled approach
+to data cleaning, model building, and model checking based in
+procedures common to data science [@Kuhn_Silge_2022]. Second, we take
+full advantage of these tools and procedures to fit a large number of
+institutional data points available through the College Scorecard to
+increase the predictive capacity of our models in determining
+program-level earnings. 
 
 # Methodology
 
-Our methodology is defined by machine-learning approaches to data
-analysis, characterized by the use of a model workflow, feature
-engineering for model use and elastic net/random forest regression
-models to appropriately fit our data and identify potential income
-predictors [@Hastie_etal_2016; @Kuhn_Silge_2022].
+<!--  to build subsequent models, add models -->
+<!-- to built workflow and fit the models to resampled data. We then -->
+<!-- perform tuning for both models to ensure maximum predictive capacity. -->
 
-More specifically, we first read in the College Scorecard data (the
-field of study and all data elements files, specifically) and perform
-necessary preprocessing work to 1) drop data that were privacy
-suppressed/missing, 2) recode categorical data to workable dummy-coded
-variables and 3) drop zero variance/highly correlated predictors.
+To estimate program-level earnings using College Scorecard data, we
+use data science-based approaches to data analysis, which are
+characterized by principled procedures of data cleaning, model
+building, and testing. More specifically, we use two machine learning
+models---elastic net and random forest---to identify the strongest
+predictors and build robust models of program-level income
+[@Hastie_etal_2016; @Kuhn_Silge_2022].
 
-Next, we perform kfold cross validation (20 folds) on the training set
-data to set the foundation for model selection/evaluation. Two
-regression-based methods (elastic net and random forest) are utilized
-to build subsequent models, add models to built workflow and fit the
-models to resampled data. We then perform tuning for both models to
-ensure maximum predictive capacity. The two identified models, elastic
-net regularization and random forest regression, are particularly
-useful in our project, as they provide for 1) principled predictor
-selection from a large set of possible determinants of earnings and 2)
-identification of non-linear relationships between predictors. Elastic
-net regularization is an improved version of the LASSO method that
-combines penalties to remove non-predictive coefficients. Random
-forest regression models produce variable cases and forces a vote on
-the most likely outcome for the covariate in question.
+Our process begins with reading in the full College Scorecard data
+set, which includes program-specific / field of study data
+elements. Using the Tidymodels framework [@Kuhn_Silge_2022], we
+perform necessary preprocessing work that currently includes (1)
+dropping privacy suppressed/missing data elements, (2) recoding
+categorical data to dummy-coded indicator variables, and (3) removing
+zero variance/highly correlated predictors. 
 
-These methods result in predictive estimates for both the elastic net
-and random forest regression models critical to our ultimate
-analyses/findings. These predictors are variables identified in the
-Scorecard dataset that are highly predictive indicators of our
-dependent variable: median earnings from graduates of the program
-after 1 year.
+Next, we partition our data into two sets: a training data set which
+we use to build our models and a testing data set that we then use to
+produce our results. As part of the model building exercise, we
+perform k-fold cross validation on the training set data to set the
+foundation for model selection/evaluation. Specifically, we
+recursively split the training data into 20 separate data sets,
+fitting and tuning the best model each time and then averaging across
+all results. 
+
+We use two regression-based, machine-learning methods, elastic net and
+random forest. Elastic net regularization combines LASSO and ridge
+regression penalties to remove non-predictive coefficients and shrink
+correlated parameters towards each other. Random forest regression
+models average results from a large number of decision trees fit to a
+random subset of observations and covariates. These two models are
+particularly useful in our project, as they provide two key
+benefits. First, they offer principled predictor selection from a
+large set of possible determinants of earnings. Second, they also
+support the identification of non-linear relationships between
+predictors. Using these two modeling approaches we identify variables
+in the Scorecard dataset that are highly predictive indicators of our
+dependent variable of interest: median earnings from graduates of the
+program after one year.
 
 # Data 
 
 Data for this project originate from two specific sources: the College
-Scorecard and the most recent American qCommunity Survey 5-year
-estimates (2016-2020), selecting 2019 data to align with the recent
-2019-20 school year data featured in the Scorecard. The Scorecard
-provided us with our dependent variable data (median earnings for
-college graduates 1 year after graduation), and accompanied with the
-ACS county-level data, contributes the numerous possible predictors
-for our models.
+Scorecard and American Community Survey. We focus on the most recent
+2019-202 College Scorecard data and 2019 ACS data to align. Our
+dependent variable data, median earnings for college graduates one year
+after graduation comes from the College Scorecard. 
 
-More specifically, the ACS county data feature FIPS codes to uniquely
-identify each county, calculations for: 1) the percentage of county
-bachelor's degree holders, 2) the percentage of homeowners in each
-county and 3) the percentage of individuals identified in the county
-labor force and the median household income for each county (for most
-recent 12 months, using 2019-adjusted dollars).
+ACS county data feature FIPS codes to uniquely identify each county,
+calculations for: 1) the percentage of county bachelor's degree
+holders, 2) the percentage of homeowners in each county and 3) the
+percentage of individuals identified in the county labor force and the
+median household income for each county (for most recent 12 months,
+using 2019-adjusted dollars).
 
 The College Scorecard data present 2,000+ variables featuring
 institutional characteristics and program-level data for 6,700
