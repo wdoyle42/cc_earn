@@ -1,0 +1,125 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[english]{babel}
+\usepackage[backend=biber, style=apa]{biblatex}
+\addbibresource{csc_research.bib}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{dsfont}
+\usepackage{authblk}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{setspace}
+\usepackage{appendix}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{singlelinecheck=off,font=small,labelfont=bf}
+\usepackage[nolists,tablesfirst,nomarkers]{endfloat}
+\newcommand{\RR}{\raggedright\arraybackslash}
+\newcommand{\RL}{\raggedleft\arraybackslash}
+\newcommand{\CC}{\centering\arraybackslash}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0em}
+
+
+\title{Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates}
+\author[1]{Benjamin Skinner}
+\author[2]{William Doyle}
+\author[3]{Olivia Morales}
+\affil[1, 3]{University of Florida}
+\affil[2]{Vanderbilt University}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\doublespacing
+
+\begin{center}
+\section*{Abstract}
+\end{center}
+
+Using a principled machine-learning approach, we predict recent
+college graduates' earnings using data from the College
+Scorecard. Early results support the predictive capabilities of
+institutional characteristics like school classification and overall
+debt repayment rates on recent graduate earnings.
+
+\vspace{5mm}
+
+keywords: \emph{machine learning, postsecondary earnings, return on investment}
+
+
+\section*{Introduction}
+
+The broad objective of this project involves the prediction of program
+earnings for recent college graduates using common
+institutional/program variables available via the College Scorecard
+website. Econometric approaches to predicting earnings after
+graduation are not uncommon in the higher education literature, as
+many researchers in the field have attempted to support college-going
+behavior due to its generous return on
+investment. \cite{Oreopoulous_Petronijevic_2013} take a comprehensive look
+at the research available on market returns to higher education,
+reviewing 30 years of literature that ultimately demonstrate an
+economic advantage and higher earnings potential for those individuals
+with a college education. However, \cite{Carnevale_etal_2011} notes an
+important caveat for this general earnings boost: the potential
+earnings increase depends on the type of degree/credential earned,
+program of study, etc.
+
+The creation and publication of the College Scorecard by the
+U.S. Department of Education presented an opportunity for families to
+identify the institutions that provided the best labor outcomes for
+their students with the least amount of financial burden
+\cite{obama_2013}. Made publicly available in 2015, the data in the
+College Scorecard (while illuminating varied institutional
+characteristics), did not generally produce the kind of impact the
+Obama administration envisioned and went mostly underutilized. It also
+fell short of providing complete data profiles of
+institutional/program characteristics, as much of the data eventually
+published were missing or privacy suppressed.
+
+Despite its shortcomings, the College Scorecard data have been used in
+conjunction with common econometric approaches to evaluate student
+responsiveness to the Scorecard. In particular, \cite{hurwitz_student_2018}
+utilizes a DID model that demonstrates the decision-making changes in
+generally well-resourced high school students after the publication of
+the Scorecard, directing their SAT scores to schools that, on average,
+had higher median earnings for graduates; the two other hallmarks of
+the Scorecard (graduation rates and average costs), produced virtually
+no change in SAT score-sending behaviors. Other higher
+education/economics researchers have adopted econometric
+methodological approaches while engaging the earnings data available
+on the Scorecard in particular institutional and program contexts
+\cite{boland_effect_2021, elu_earnings_2019, mabel_value_2020,
+seaman_assessing_2017}. It's important, however, to highlight the
+tendency of econometric methods to misspecify models and lend itself to
+selector/researcher bias \cite{Imbens_2004}.
+
+Machine learning, in contrast, allows the computer and corresponding
+algorithms to determine the model and ultimately train the model to
+promote increased accuracy. While commonly associated with convoluted
+computational statistics and computer programming methods, it has
+crept into the education (particularly higher education) field to
+bolster model accuracy and potential estimates in quantitative higher
+education studies. In particular, the last 6-7 years have seen an
+uptick in higher education research projects utilizing machine
+learning methods \cite{aulck2017predicting, savvas_etal_2021, Zeineddine_2021}. 
+With this increase in prominence, how does this
+project stand out? 
+
+This project fills a dire gap in higher education literature by not
+only utilizing the myriad institutional data points available on the
+Scorecard, but marrying these data with novel machine learning
+techniques that improve the predictive capacity of common
+institutional characteristics in determining potential graduate
+earnings.
+
+\printbibliography
+\end{document}
+
