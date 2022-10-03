@@ -26,11 +26,12 @@
 \setlength{\parskip}{0em}
 
 % directories
+\newcommand{\bibdir}{../bib}
 \newcommand{\figdir}{../figures}
-\newcommand{\tabdir}{../tables/tex}
+\newcommand{\tabdir}{../tables}
 
 % bibliography
-\addbibresource{csc_research.bib}
+\addbibresource{\bibdir/csc_research.bib}
 
 % author information
 \title{Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates}
@@ -93,7 +94,119 @@ Our process begins with reading in the full College Scorecard data set, which in
 
 Next, we partition our data into two sets: a training data set which we use to build our models and a testing data set that we then use to produce our results. As part of the model building exercise, we perform k-fold cross validation on the training set data. Specifically, we recursively split the training data into 20 separate data sets, fitting and tuning the best model each time and then averaging across all results. After deciding upon the best model, we use it to predict program-level earnings using the held-out testing data, which prevents the kind of over-fitting that can bias results too closely to particular samples.
 
+For our models, we use two regression-based, machine-learning methods: elastic net and random forest. Elastic net regularization combines LASSO and ridge regression penalties to remove non-predictive coefficients and shrink correlated parameters towards each other. Random forest regression models average results from a large number of decision trees fit to a random subset of observations and covariates \parencite{Hastie_etal_2016}. These models are particularly useful in our project, as they provide two key benefits. First, they offer principled predictor selection from a large set of possible \documentclass[a4paper, 12pt]{article}
+
+% packages
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage[backend=biber, style = apa]{biblatex}
+\usepackage{dsfont}
+\usepackage{authblk}
+\usepackage{microtype}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathptmx}
+\usepackage{setspace}
+\usepackage{appendix}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{singlelinecheck=off,font=small,labelfont=bf}
+\usepackage[nolists,tablesfirst,nomarkers]{endfloat}
+
+% commands
+\newcommand{\RR}{\raggedright\arraybackslash}
+\newcommand{\RL}{\raggedleft\arraybackslash}
+\newcommand{\CC}{\centering\arraybackslash}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0em}
+
+% directories
+\newcommand{\figdir}{../figures}
+\newcommand{\tabdir}{../tables/tex}
+
+% bibliography
+\addbibresource{csc_research.bib}
+
+% author information
+\title{Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates}
+\author[1]{Benjamin Skinner}
+\author[2]{Olivia Morales}
+\author[3]{William Doyle}
+\affil[1, 2]{University of Florida}
+\affil[3]{Vanderbilt University}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\doublespacing
+
+\begin{center}
+\section*{Abstract}
+\end{center}
+
+Using a principled machine-learning approach, we predict recent
+college graduates' earnings using data from the College
+Scorecard. Early results support the predictive capabilities of
+institutional characteristics like school classification and overall
+debt repayment rates on recent graduate earnings.
+
+\vspace{5mm}
+
+keywords: \emph{machine learning, post-secondary earnings, return on investment}
+
+\pagebreak
+\section*{Introduction}
+
+Econometric approaches to predicting earnings after graduation are not uncommon in the higher education literature, as many researchers have found evidence of higher education's positive return on investment \parencite{doyle2016educearn, card:1995, Card:1999, Card:2001, Oreopoulous_Petronijevic_2013}. However, predictive accuracy and potential researcher bias are particularly of concern in applying econometric frameworks in research studies. Moreover, many of these formative studies utilized unique institutional-level data not widely available to researchers until the launch of the College Scorecard tool. The publication of the College Scorecard by the U.S. Department of Education provided a novel opportunity for higher education scholars to access national institutional/study-level data for future researcher endeavors. The under-utilization of this resource, along with the limited capacity of traditional econometric models, prompts our study to employ machine learning methods to predict college graduates' earnings from College Scorecard data.
+
+The principal discourse surrounding the purpose of higher education always centers the increased earnings potential awarded by a college education. As such, state and federal policymakers hold a vested interest in directing economic resources most efficiently, to those programs and institutions pushing out successful graduates and contributing to local economies (particularly in the public institutional context). To do this, relevant stakeholders would find useful information regarding institutional \& program characteristics that  predict a recent graduate's earnings potential. The results of this study directly address this desire by providing not only necessary predictions, but predictions with increased accuracy via machine-learning methodological approaches. 
+
+In this project, we use the tools and procedures of data science and common institutional/program variables available via the College Scorecard to provide robust predictions of program earnings for recent college graduates. To estimate program-level earnings using College Scorecard data, we use data science-based approaches to data analysis, which are characterized by principled procedures of data cleaning, model building, and testing. More specifically, we use two machine learning models---elastic net and random forest---to identify the strongest predictors and build robust models of program-level income \parencite{Hastie_etal_2016, Kuhn_Silge_2022}.
+
+Our findings highlight both expected and unexpected predictors of earnings potential for recent graduates. To no surprise, the type of degree received (Associate's, Bachelor's, etc.) typically predicts differential earnings potential after graduation. However, some fields (particularly those concentrated in the health sciences, did not produce significantly different results across degree credentials. Outside of strict levels of prediction, our remaining models identified surprising positive predictors of earnings potential, including total outstanding loan balance and median debt 10 years after graduation. Our random forest model also highlighted several variables in terms of their importance in prediction. These variables included family income, number of students included in the three-year cohort default rate and percentage of students making progress on their federal loan payments two years after graduation.
+
+This work supports future higher education research in two key ways. First, we offer an example of a principled approach to data cleaning, model building, and model checking based in procedures common to data science that we believe could be more widely incorporated in higher education policy research \parencite{Kuhn_Silge_2022}. Second, we take full advantage of these tools and procedures to fit a large number of institutional data points available through the College Scorecard to increase the predictive capacity of our models in determining program/institutional level earnings.
+
+\section*{Literature Review}
+
+\subsection*{Market Returns from Higher Education}
+
+The preoccupation with affirming higher education's economic return to students holds a steady place in scholarship on colleges and universities in the U.S. \textcite{Oreopoulous_Petronijevic_2013} take a comprehensive look at the research available on market returns to higher education, reviewing 30 years of literature that ultimately demonstrates an economic advantage and higher earnings potential for those individuals with a college education. \textcite{hout_2012} dives deeper into the economic benefits of a college education, investigating college returns in times of economic instability. During the Great Recession, there were notable differences in employment stability and recovery post-recession between college and non-college graduates \parencite{hout_2012, hout_etal_2011ch}. Results comparing certain demographic groups pre- and post-Recession affirm this difference, with those of higher education levels experiencing less declines in employment \parencite{hoynesetal_2012}.  
+
+
+\textcite{Carnevale_etal_2011}, however, note an important caveat for this general earnings boost for college graduates: the potential earnings increase depends on the type of degree/credential earned and program of study. Higher education scholars have fixated on this difference by investigating the long-term earnings premiums afforded by a college education by degree type and even field of study. \textcite{kimtamborini_2019} examined this question using data from the Survey of Income and Program Participation from 2004 \& 2008. Across all levels of post-secondary, sub-baccalaureate education (Associate's, Certificates, etc.), individuals experienced higher annual and cumulative earnings compared to their high school graduate counterparts. More noteworthy, however, were the higher earnings premiums awarded to Associate's degree holders in the physical/health sciences as compared to Bachelor's degree holders in the humanities/liberal arts.
+
+\subsection*{History/Use of the College Scorecard}
+
+The College Scorecard initially launched through the work and advocacy of then-President Obama and the U.S. Department of Education. The vision of the Scorecard surrounded this novel opportunity for families to identify the institutions that provided the best labor outcomes for their students with the least amount of financial burden \parencite{obama_2013}. While illuminating varied institutional characteristics when it was first made publicly available in 2015, the data in the College Scorecard did not generally produce the kind of impact the Obama administration envisioned and went mostly underutilized by consumers \parencite{huntington2016search}. The Scorecard also fell short of providing complete data profiles of institutional/program characteristics, as large sections of released data were missing or privacy suppressed due to small program sizes and concerns over confidentiality.
+
+Despite its shortcomings, the College Scorecard data have been used in conjunction with standard econometric approaches to evaluate student responsiveness to the kinds of college choice information provided by the Scorecard. \textcite{hurwitz_student_2018} employ a DID framework to show how college decision-making changed among students from generally well-resourced high schools after the publication of the Scorecard. While two college program metrics found in the Scorecard---graduation rates and average costs---produced virtually no change in SAT score-sending behaviors, the authors did find that students directed their SAT scores to schools that, on average, had higher median earnings for graduates. This signals the salience of future earnings potential to students who are deciding on college and program. Other researchers have used econometric-based methodological approaches with Scorecard earnings data in particular institutional and program contexts \parencite{boland_effect_2021, elu_earnings_2019, mabel_value_2020, seaman_assessing_2017}.
+
+\subsection*{Machine Learning Methods in the Academe}
+
+With the growing Scorecard literature, it remains important to consider the ways common econometric approaches may lead to misspecified models and unintentional researcher bias when estimating the relationship between program characteristics and graduate earnings \parencite{Imbens_2004}. Compared to the standard econometric toolkit, approaches based in data science and machine learning can improve estimate quality by following structured procedures and computational algorithms to build, test, and train models \parencite{Hastie_etal_2016}. Historically associated with computational statistics and computer programming methods, tools of data science and machine learning have been increasingly used among higher education researchers to provide principled estimates, including those that would not otherwise be possible with standard econometric methods \parencite{skinner2021civic, aulck2017predicting, savvas_etal_2021, Zeineddine_2021}.
+
+Random forest models, in particular, have been featured in recent higher education studies as an improvement mechanism for prediction and identification of variable importance in statistical models. In their study of predicting academic success and major, \textcite{beaulacrosenthal_2019} determined that the random forest models utilized consistently outperformed the comparable logistic regression models in their predictive capacities. Elastic net regularization (as a tool to improve the generalization of regression models) is less common in the education literature, but is supported by various writings in scholarship on statistical methods. Originally proposed by \textcite{zouhastie_2005} as a boost to the use of solely LASSO/ridge regression penalties in variable selection, it now enjoys a pronounced presence in statistics and computation journals \parencite{zouzhang_2009, lilin_2010}.
+
+Our project situates itself uniquely in the larger higher education literature by marrying relatively novel statistical/machine learning methods with an underutilized, rich data resource to model salient predictions of earnings potential for recent college graduates.
+
+\section*{Methodology}
+
+To estimate program-level earnings using College Scorecard data, we use data science-based approaches to data analysis, which are characterized by principled procedures of data cleaning, model building, and testing. More specifically, we use two machine learning models---elastic net and random forest---to identify the strongest predictors and build robust models of program-level income \parencite{Hastie_etal_2016, Kuhn_Silge_2022}.
+
+Our process begins with reading in the full College Scorecard data set, which includes program-specific / field of study data elements. Using the Tidy models framework \parencite{Kuhn_Silge_2022}, we perform a pipeline of preprocessing work that currently includes (1) dropping privacy suppressed/missing data elements, (2) recoding categorical data to dummy-coded indicator variables, and (3) removing zero variance/highly correlated predictors.
+
+Next, we partition our data into two sets: a training data set which we use to build our models and a testing data set that we then use to produce our results. As part of the model building exercise, we perform k-fold cross validation on the training set data. Specifically, we recursively split the training data into 20 separate data sets, fitting and tuning the best model each time and then averaging across all results. After deciding upon the best model, we use it to predict program-level earnings using the held-out testing data, which prevents the kind of over-fitting that can bias results too closely to particular samples.
+
 For our models, we use two regression-based, machine-learning methods: elastic net and random forest. Elastic net regularization combines LASSO and ridge regression penalties to remove non-predictive coefficients and shrink correlated parameters towards each other. Random forest regression models average results from a large number of decision trees fit to a random subset of observations and covariates \parencite{Hastie_etal_2016}. These models are particularly useful in our project, as they provide two key benefits. First, they offer principled predictor selection from a large set of possible determinants of earnings. Second, they also support the identification of non-linear relationships between predictors, which means our predictions are not dependent on a researcher-established functional form in the model. Using these two modeling approaches we identify variables in the Scorecard data set that are highly predictive indicators of our dependent variable of interest: median earnings from graduates of the program after one year.
+
 
 \section*{Data}
 
@@ -101,7 +214,7 @@ Data for this project originate from two specific sources: the College Scorecard
 
 Using unique county FIPS codes, we match each higher education institution with county-level data from the ACS. To align with the latest Scorecard data, we use 2019 ACS estimates. At this time, we include the percentage of adults who have attained a bachelor's degree or higher; the percentage of homeowners; percentages of adults in the labor force; and median household income. Because a significant amount of individual student information in the Scorecard data is suppressed for privacy reasons, including county-level data from the ACS allows us to recover some information that is useful for predicting earnings of recent graduates.
 
-\section*{Preliminary Findings}
+\section*{Findings}
 
 Across figures 1-3 (please see uploaded files for our figures), we show median first year earnings for a selection of programs at three degree levels: Bachelors, associate and certificate/diploma. Across the figures, we see generally greater earnings potential for Bachelors degree holders compared to associate degree and certificate/diploma holders in similar fields of study. For example, those who earn a Bachelors degree in computer programming earn just over \$50,000 in their first year compared to computer programmers with an associates degree or those with a certificate in computer systems networking and telecommunications who earn closer to \$30,000. On the other hand, there are some fields that do not show much difference in median first year earnings. As an example, nurses with an associate degree earn about the same in the first year, about \$60,000, as those with a Bachelors degree.
 
@@ -117,5 +230,7 @@ body of work.
 While the technical nature of data science and machine learning approaches to prediction may sometimes seem removed from the higher education policy landscape at large, this study, at its foundation, cares about the material outcomes for students who invest their money and time in their educational futures. We employ our principled data scientific approach so that we might identify the strongest predictors of college graduates' incomes without introducing bias through our variable selection and modeling choices. Our ultimate goal with this work is to provide information on the predictors of strong programs that will inform policy and practice that amplifies positive student earnings potential.
 
 \pagebreak
+\setstretch{1}
+\setlength\bibitemsep{0.5\baselineskip} 
 \printbibliography
 \end{document}
