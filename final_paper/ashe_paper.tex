@@ -17,7 +17,8 @@
 \usepackage{appendix}
 \usepackage{tabularx}
 \usepackage{booktabs}
-\usepackage{caption}
+\usepackage{caption}	
+\usepackage{pdfpages}
 \usepackage[margin = 1in]{geometry}
 \captionsetup{singlelinecheck=off,font=small,labelfont=bf}
 \usepackage[nolists,tablesfirst,nomarkers]{endfloat}
@@ -36,6 +37,9 @@
 
 % bibliography
 \addbibresource{\bibdir/csc_research.bib}
+
+% figures/tables
+\includepdf[pages=-]{\figdir/tables_figures_references.pdf}
 
 % author information
 \title{Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates}
@@ -118,7 +122,7 @@ strongest predictors and build robust models of program-level income
 \parencite{Hastie_etal_2016, Kuhn_Silge_2022}.
 
 Our findings highlight both expected and unexpected predictors of
-earnings potential for recent graduates. To no surprise, the type of
+earnings potential for recent graduates. As anticipated, the type of
 degree received (Associate's, Bachelor's, etc.) typically predicts
 differential earnings potential after graduation. However, some fields
 (particularly those concentrated in the health sciences, did not
@@ -147,7 +151,7 @@ level earnings.
 
 \subsection*{Market Returns from Higher Education}
 
-The preoccupation with affirming higher education's economic return to
+Affirming higher education's economic return to
 students holds a steady place in scholarship on colleges and
 universities in the U.S. \textcite{Oreopoulous_Petronijevic_2013} take
 a comprehensive look at the research available on market returns to
@@ -167,7 +171,7 @@ declines in employment \parencite{hoynesetal_2012}.
 \textcite{Carnevale_etal_2011}, however, note an important caveat for
 this general earnings boost for college graduates: the potential
 earnings increase depends on the type of degree/credential earned and
-program of study. Higher education scholars have fixated on this
+program of study. Higher education scholars have pondered over this
 difference by investigating the long-term earnings premiums afforded
 by a college education by degree type and even field of
 study. \textcite{kimtamborini_2019} examined this question using data
@@ -214,7 +218,7 @@ Scorecard earnings data in particular institutional and program
 contexts \parencite{boland_effect_2021, elu_earnings_2019,
 mabel_value_2020, seaman_assessing_2017}.
 
-\subsection*{Machine-Learning Methods in the Academe}
+\subsection*{Machine-Learning Methods in the Academy}
 
 With the growing Scorecard literature, it remains important to
 consider the ways common econometric approaches may lead to
@@ -274,7 +278,7 @@ the COVID-19 pandemic. To address this issue, recommendations were put
 forth to expand the capacity of existing nursing education programs
 across Florida \parencite{floridahouse_2022, workforce_2021}.
 
-The frank reality of the state of higher education funding
+The reality of the state of higher education funding
 necessitates policy making in anticipation of economic/workforce
 needs. Our study fits neatly into this narrative by providing
 predictive earnings potential that could inform policy making,
