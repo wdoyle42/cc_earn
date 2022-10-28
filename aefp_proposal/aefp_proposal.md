@@ -2,7 +2,7 @@
 title: Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates
 subtitle: |
   | 
-  | Proposal for ASHE 2022
+  | Proposal for AEFP 2023
 abstract: |
   \noindent Using a principled machine-learning approach, we predict recent
   college graduates' earnings using data from the College
