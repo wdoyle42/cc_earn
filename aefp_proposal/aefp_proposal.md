@@ -57,41 +57,33 @@ U.S. Department of Education presented an opportunity for families to
 identify the institutions that provided the best labor outcomes for
 their students with the least amount of financial burden
 [@obama_2013]. Released in 2015, the College Scorecard went mostly
-underutilized by consumers [@huntington2016search]. The Scorecard also
-fell short of providing complete data profiles of
-institutional/program characteristics, as large sections of released
-data were missing or privacy suppressed due to small program sizes and
-concerns over confidentiality.
+underutilized by consumers [@huntington2016search].
 
-Despite its shortcomings, the College Scorecard data have been used in
-conjunction with standard econometric approaches to evaluate student
-responsiveness to the kinds of college choice information provided by
-the Scorecard. @hurwitz_student_2018 employ a DID framework to show
-how college decision-making changed among students from generally
-well-resourced high schools after the publication of the Scorecard.
-While two college program metrics found in the Scorecard---graduation
-rates and average costs---produced virtually no change in SAT
-score-sending behaviors, the authors did find that students directed
-their SAT scores to schools that, on average, had higher median
-earnings for graduates. This signals the salience of future earnings
-potential to students who are deciding on college and program.
+The College Scorecard data have been used to evaluate student
+responsiveness to the Scorecard. @hurwitz_student_2018 employ a DID
+framework to show how college decision-making changed among students
+from well-resourced high schools after the publication of the
+Scorecard.  The authors found that students directed their SAT scores
+to schools that, on average, had higher median earnings for
+graduates. This signals the salience of future earnings potential to
+students who are deciding on colleges and programs.
 
-With this growing literature, it remains important to consider the
-ways common econometric approaches may lead to misspecified models and
+With this growing literature, its important to consider the ways
+common econometric approaches may lead to misspecified models and
 unintentional researcher bias when estimating the relationship between
 program characteristics and graduate earnings [@Imbens_2004]. Compared
 to the standard econometric toolkit, approaches based in data science
 and machine learning can improve estimate quality by following
 structured procedures and computational algorithms to build, test, and
-train models [@Hastie_etal_2016]. 
+train models [@Hastie_etal_2016].
 
 In this project, we use the tools and procedures of data science and
-common institutional/program variables available via the College
-Scorecard to provide robust predictions of program earnings for recent
-college graduates. This work supports future higher education research
-in two key ways. First, we offer an example of a principled approach
-to model specification based in data science procedure that we believe
-could be more widely incorporated in higher education policy research
+common institutional/program variables in the College Scorecard to
+provide robust predictions of program earnings for recent college
+graduates. This work supports future higher education research in two
+key ways. First, we offer an example of a principled approach to model
+specification based in data science procedure that we believe could be
+more widely incorporated in higher education policy research
 [@Kuhn_Silge_2022]. Second, we take full advantage of these tools to
 fit a large number of institutional data points available through the
 College Scorecard to increase the predictive capacity of our models in
@@ -103,13 +95,6 @@ determining program-level earnings.
 <!-- to built workflow and fit the models to resampled data. We then -->
 <!-- perform tuning for both models to ensure maximum predictive capacity. -->
 
-To estimate program-level earnings using College Scorecard data, we
-use data science-based approaches to data analysis, which are
-characterized by principled procedures of data cleaning, model
-building, and testing. More specifically, we use two machine learning
-models---elastic net and random forest---to identify the strongest
-predictors and build robust models of program-level income
-[@Hastie_etal_2016; @Kuhn_Silge_2022].
 
 Our process begins with reading in the full College Scorecard data
 set, which includes program-specific data elements. Using the Tidy
@@ -127,18 +112,16 @@ data. Specifically, we recursively split the training data into 20
 separate data sets, fitting and tuning the best model each time and
 then averaging across all results. After deciding upon the best model,
 we use it to predict program-level earnings using the held-out testing
-data, which prevents the kind of over-fitting that can bias results
-too closely to particular samples.
+data to mitigate issues of overfitting.
 
 For our models, we use two regression-based, machine-learning methods:
 elastic net and random forest. Elastic net regularization combines
 LASSO and ridge regression penalties to remove non-predictive
-coefficients and shrink correlated parameters towards each
-other. Random forest regression models average results from a large
-number of decision trees fit to a random subset of observations and
-covariates [@Hastie_etal_2016]. These models are particularly useful
-in our project, as they provide two key benefits. First, they offer
-principled predictor selection from a large set of possible
+coefficients. Random forest regression models average results from a
+large number of decision trees fit to a random subset of observations
+and covariates [@Hastie_etal_2016]. These models are particularly
+useful in our project, as they provide two key benefits. First, they
+offer principled predictor selection from a large set of possible
 determinants of earnings. Second, they also support the identification
 of non-linear relationships between predictors, which means our
 predictions are not dependent on a researcher-established functional
@@ -149,10 +132,9 @@ graduates of the program after one year.
 
 # Data 
 
-Data for this project originate from the College Scorecard and
-American Community Survey. We focus on the most recent 2019-2020
-College Scorecard data. In addition to our key outcome variable of
-interest, median earnings for college graduates one year after
+Data for this project originate from the College Scorecard (2019-2020)
+and American Community Survey. In addition to our key outcome variable
+of interest, median earnings for college graduates one year after
 graduation, we take advantage of the large number of variables
 available in the College Scorecard data set. These include over 2,000
 variables featuring institutional characteristics and program-level
@@ -169,16 +151,12 @@ Across figures 1-3 (please see uploaded files for our figures), we
 show median first year earnings for a selection of programs at three
 degree levels: Bachelors, associate and certificate/diploma. Across
 the figures, we see generally greater earnings potential for Bachelors
-degree holders compared to associate degree and certificate/diploma
-holders in similar fields of study. For example, those who earn a
-Bachelors degree in computer programming earn just over $50,000 in
-their first year compared to computer programmers with an associates
-degree or those with a certificate in computer systems networking and
-telecommunications who earn closer to $30,000. On the other hand,
-there are some fields that do not show much difference in median first
-year earnings. As an example, nurses with an associate degree earn
-about the same in the first year, about $60,000, as those with a
-Bachelors degree.
+degree holders compared to other degree holders in similar fields of
+study. For example, those who earn a Bachelors degree in computer
+programming earn just over $50,000 in their first year compared to
+computer programmers with an associates degree or those with a
+certificate in computer systems networking and telecommunications who
+earn closer to $30,000.
 
 Figure 4 shows predictor estimates from the elastic net model (see
 Table 1 for a concordance of variable names with their
@@ -195,18 +173,15 @@ graduated students.
 <!-- estimates to inform the predictive capabilities of certain -->
 <!-- program/institutional characteristics. -->
 
-Figure 5 shows the most important variables from our random forest
-regression model, meaning those variables that, across all decision
-trees, tend to be the most predictive of median first year
+Figure 5 shows the most important variables (those most predictive)  
+from our random forest regression model of median first year
 earnings. As with our elastic net model results, we see a similar
 emphasis on the importance of type of degree credential, specifically
 certificate/diploma and Bachelor's degrees. We also see the importance
-of median family income and average family income for those students
-who are considered independents. Less expected are the comparative
-importance---compared to many thousand predictors---of three-year
-cohort default rates and the percentage of students making
-satisfactory academic progress by completing their coursework within
-eight years at the original institution.
+of median family income and average family income for independent
+students. Less expected are the comparative importance---compared to
+many thousand predictors---of three-year cohort default rates and the
+percentage of students making satisfactory academic progress.
 
 # Study significance
 
