@@ -68,7 +68,7 @@
 \begin{document}
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% TITLE
+% title slide
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \title{\LARGE Employing Machine-Learning Approaches \\ to Predict Incomes 
@@ -99,15 +99,20 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
 % SLIDES
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+% Introduction
 \begin{frame}
   \frametitle{The Prediction Business for Returns to Higher Education}
   \begin{block}{What we know}
     \begin{itemize}
-    	\item Wealth of scholarship to support economic returns from higher education
+    	\item Wealth of scholarship to support economic returns from
+          higher education
+          \citep{card:1995, Card:1999, Card:2001, doyle2016educearn, Oreopoulous_Petronijevic_2013}
     	\item Prior analyses limited by access to institution-level data not widely available 
    	 \begin{itemize}
     		\item The publication of the College Scorecard (2015) changed the higher education \\
-		research landscape, with national institutional-level data now publicly accessible
+		research landscape, with national institutional-level
+                data now publicly accessible
+                \citep{obama_2013}
    	 \end{itemize}
     \end{itemize}
   \end{block}
@@ -119,19 +124,33 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     made algorithmically, based on features of the data)
     \end{itemize}
   \end{block}
-  \begin{block}{Our project}
-    \begin{itemize}
-    \item Marriage between Scorecard data \& machine learning to
-      predict incomes
-    \end{itemize}
-  \end{block}
 \end{frame}
 
+% Our focus/guiding questions
+\begin{frame}
+  \frametitle{Our focus \& guiding research questions}
+  \begin{block}{Focus}
+    \begin{itemize}
+      \item Marriage of the College Scorecard data \& machine learning methods to
+        predict recent graduates' incomes with increased accuracy
+    \end{itemize}
+  \end{block}
+  \begin{block}{Research questions}
+    \begin{enumerate}
+        \item What institutional \slash  program level variables are most
+          predictive of median first-year earnings?
+        \item What are the patterns of association (positive \slash negative)
+          for these variables?
+    \end{enumerate}
+   \end{block}
+\end{frame}
+
+% Data
 \begin{frame}
   \frametitle{Data}
     \begin{block}{College Scorecard}
       \begin{itemize}
-      \item 2010-2020 
+      \item 2019-2020 
       \item Includes over 2,000 variables for 6,700 accredited higher
         education institutions (HEIs) in the U.S.
       \item Significant portions of the data are privacy suppressed
@@ -141,12 +160,35 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     \begin{itemize}
     \item 2015-2019
     \item Geography of interest: County level (using FIPS)
-    \item Matching HEIs  with unique county FIPS codes
+    \item Matching HEIs with unique county FIPS codes
     \item Helps recover information lost from missing data in the Scorecard
     \end{itemize}
   \end{block}
 \end{frame}
 
+% Tidymodels explanation
+\begin{frame}
+  \frametitle{Data preprocessing and model building with Tidymodels}
+  \begin{block}{Tidymodels as a framework}
+    \begin{itemize}
+    \item Proposed by \citet{Kuhn_Silge_2022}, Tidymodels provides a
+      succinct framework for preprocessing data to eventually use in
+      fitting successive models and delineating overall workflow
+      \begin{itemize}
+        \item In our project, our models perform elastic net
+          regularization and random forest regression to estimate the
+          predictive capabilites of variables in the College Scorecard
+          data
+      \end{itemize}
+     \end{itemize}
+   \end{block}
+   \begin{block}{}
+     \centering
+        \includegraphics[scale = 0.4]{\imgdir/tidymodels_example.png}
+      \end{block}   
+\end{frame}
+
+% Methodology/Model Specification
 \begin{frame}
   \frametitle{Methodology and Model Specification}
   \begin{equation}
@@ -202,7 +244,6 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
 \begin{frame}[allowframebreaks]
 \frametitle{References}
 \bibliographystyle{apacite}
-\nocite{*}
 \bibliography{\bibdir/csc_research.bib}
 \end{frame}
 
