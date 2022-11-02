@@ -52,23 +52,18 @@ header-includes:
 
 # Objective/Background
 
-The creation and publication of the College Scorecard by the
-U.S. Department of Education presented an opportunity for families to
-identify the institutions that provided the best labor outcomes for
-their students with the least amount of financial burden
-[@obama_2013]. Released in 2015, the College Scorecard went mostly
-underutilized by consumers [@huntington2016search].
+The publication of the College Scorecard in 2015 presented an
+opportunity for families to identify institutions that provided the
+best labor outcomes with the least amount of financial burden for
+students [@obama_2013]. Though it appeared to be underutilized by
+consumers [@huntington2016search], @hurwitz_student_2018 show how
+students' college decision-making changed after the Scorecard's
+initial release, finding that students directed their SAT scores to
+schools with higher median earnings for graduates. This signals the
+continued salience of future earnings potential to students who are
+deciding on colleges and programs (CITE).
 
-The College Scorecard data have been used to evaluate student
-responsiveness to the Scorecard. @hurwitz_student_2018 employ a DID
-framework to show how college decision-making changed among students
-from well-resourced high schools after the publication of the
-Scorecard.  The authors found that students directed their SAT scores
-to schools that, on average, had higher median earnings for
-graduates. This signals the salience of future earnings potential to
-students who are deciding on colleges and programs.
-
-With this growing literature, its important to consider the ways
+, it's important to consider the ways
 common econometric approaches may lead to misspecified models and
 unintentional researcher bias when estimating the relationship between
 program characteristics and graduate earnings [@Imbens_2004]. Compared
