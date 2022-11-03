@@ -88,6 +88,19 @@ earnings potential.
           median first-year earnings?
 2. What are the patterns of association (positive/negative) for these
           variables?
+		  
+# Data 
+
+Data for this project originate from the College Scorecard and the
+American Community Survey. In addition to our key outcome variable of
+interest, median earnings for college graduates one year after
+graduation, we take advantage of the large number of variables
+available in the College Scorecard data set. These include over 2,000
+variables featuring institutional characteristics and program-level
+data for 6,700 accredited institutions in the U.S. Using county FIPS
+codes, we match each higher education institution with county-level
+data from the ACS. The ACS allows us to recover contextual information
+lost in the Scorecard due to privacy suppression.
 
 # Methodology
 
@@ -128,19 +141,6 @@ researcher-established functional form in the model. Using these two
 modeling approaches we identify variables in the Scorecard data that
 are highly predictive indicators of our dependent variable of
 interest: median earnings from program graduates after one year.
-
-# Data 
-
-Data for this project originate from the College Scorecard and the
-American Community Survey. In addition to our key outcome variable of
-interest, median earnings for college graduates one year after
-graduation, we take advantage of the large number of variables
-available in the College Scorecard data set. These include over 2,000
-variables featuring institutional characteristics and program-level
-data for 6,700 accredited institutions in the U.S. Using county FIPS
-codes, we match each higher education institution with county-level
-data from the ACS. The ACS allows us to recover contextual information
-lost in the Scorecard due to privacy suppression.
 
 # Preliminary Findings
 
