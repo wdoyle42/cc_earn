@@ -295,24 +295,38 @@ models---elastic net and random forest---to identify the strongest
 predictors and build robust models of program-level income
 \parencite{Hastie_etal_2016, Kuhn_Silge_2022}.
 
-Our process begins with reading in the full College Scorecard data
-set, which includes program-specific/field of study data
-elements. Using the Tidy models framework \parencite{Kuhn_Silge_2022},
-we perform a pipeline of pre-processing work that currently includes
-(1) dropping privacy suppressed/missing data elements, (2) recoding
-categorical data to dummy-coded indicator variables, and (3) removing
-zero variance/highly correlated predictors.
+\section*{The Tidymodels philosophy}
 
-Next, we partition our data into two sets: a training data set which
-we use to build our models and a testing data set that we then use to
-produce our results. As part of the model building exercise, we
-perform k-fold cross validation on the training set
-data. Specifically, we recursively split the training data into 20
-separate data sets, fitting and tuning the best model each time and
-then averaging across all results. After deciding upon the best model,
-we use it to predict program-level earnings using the held-out testing
-data, which prevents the kind of over-fitting that can bias results
-too closely to particular samples.
+Our approach to data processing and model selection is informed by
+\textcite{Kuhn_Silge_2022}'s Tidymodels framework. This framework
+explains the normative process of data manipulation to model
+selection to performance evaluation as step-by-step instructions of a
+recipe. In our project, this begins by performing a pipeline of
+pre-processing work on our merged College Scorecard/ACS dataset. This
+pipeline delineates the steps or functions in R that are (1) dropping privacy
+suppressed/missing data elements, (2) recoding categorical data to
+dummy-coded indicator variables, and (3) removing zero variance/highly
+correlated predictors. Once completed, the dataset will be associated
+with a ``recipe'' object in our RStudio environment. 
+
+Next, we partition our original dataset into two subsets: a training
+set for model building and a test set for model performance
+evaluation.  We then perform k-fold cross validation on the training
+set data specifically, recursively splitting the training data into 20
+separate data sets to train and average across models. After deciding
+upon the best model (using RMSE as our performance metric), we use it
+to predict program-level earnings using the held-out testing
+data. These procedures (training/test sets  and cross-validation) help
+mitigate issues of overfitting that can bias results too
+closely to particular samples.
+
+% explain tuning grid for selecting best hyperparameters next %
+
+The entire process from recipe to model selection is defined in a
+workflow object in our RStudio environment. This workflow object
+instructs RStudio to perform the aforementioned steps (data recoding,
+model fitting with regression formula, etc.) sequentially, all with
+differently samples sets of data over a large tuning grid.
 
 For our models, we use two regression-based, machine-learning methods:
 elastic net and random forest. Elastic net regularization combines
