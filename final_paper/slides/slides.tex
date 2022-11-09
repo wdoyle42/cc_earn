@@ -130,17 +130,15 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
 % Our focus/guiding questions
 \begin{frame}
   \frametitle{Our focus \& guiding research questions}
-  \begin{block}{Focus}
-    \begin{itemize}
-      \item Marriage of the College Scorecard data \& machine learning methods to
-        predict recent graduates' incomes with increased accuracy
-    \end{itemize}
+  \begin{block}{Project focus}
+    \centering
+    \includegraphics[scale = 0.2]{\imgdir/project_flow.jpg}
   \end{block}
   \begin{block}{Research questions}
     \begin{enumerate}
-        \item What institutional \slash  program level variables are most
+        \item What institutional\slash program level variables are most
           predictive of median first-year earnings?
-        \item What are the patterns of association (positive \slash negative)
+        \item What are the patterns of association (positive\slash negative)
           for these variables?
     \end{enumerate}
    \end{block}
@@ -175,38 +173,92 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     \item Proposed by \citet{Kuhn_Silge_2022}, Tidymodels provides a
       succinct framework for preprocessing data to eventually use in
       fitting successive models and delineating overall workflow
-      \begin{itemize}
-        \item In our project, our models perform elastic net
-          regularization and random forest regression to estimate the
-          predictive capabilites of variables in the College Scorecard
-          data
-      \end{itemize}
      \end{itemize}
    \end{block}
    \begin{block}{}
-     \vspace{-0.25cm}%adapt
+     \vspace{-.75cm}%adapt
      \centering
         \includegraphics[scale = 0.4]{\imgdir/tidymodels_example.png}
-      \end{block}   
+   \end{block}   
 \end{frame}
 
-% Methodology/Model Specification
+% Methodology
 \begin{frame}
-  \frametitle{Methodology and Model Specification}
-  \begin{equation}
-     y_i = \alpha + c_i\gamma + \epsilon_i\notag\\
-   \end{equation}
-   \noindent where
-   \newline
-   \newline $y_i$ is the outcome variable (median
-   earnings of graduates one year after graduation)
-   \newline $\alpha$ is the intercept
-   \newline $c_i$ is a vector of covariates
-   \newline $\gamma$ is a vector of coefficients for those covariates
-   \newline $\epsilon_i$ is an error term
+  \frametitle{Prediction via regression-based machine learning methods}
+  \begin{block}{Elastic net regularization}
+    \begin{itemize}
+    \item Combines LASSO/ridge regression penalties to mitigate issues
+      of bias and variance introduction in your statistical model
+    \item Helpful in producing more parsimonious models (removes
+      irrelevant predictors)
+    \end{itemize}
+  \end{block}
+  \begin{block}{Random forests}
+    \begin{itemize}
+      \item Ensemble machine learning method particularly popular in
+        gauging variable importance in a regression model
+      \item Randomly samples covariates in a regression model, splits
+        observations on covariates to maximize reduction of RMSE 
+      \item Model builds successive trees to eventually including all
+        covariates in the model, averaging over all trees to determine
+        variable importance (reduction in RMSE)
+      \end{itemize}
+   \end{block}
 \end{frame}
+      
+      
+% Random forest: A visualization
+\begin{frame}
+  \frametitle{Random forest: A visualization}\citep{koehrsen_2018}
+    \centering
+        \includegraphics[width=.5\linewidth]{\imgdir/rf_viz.png}
+ \end{frame}
 
+% Findings I
+\begin{frame}
+  \frametitle{Elastic net regularization}
+    \centering
+        \includegraphics[width=.5\linewidth]{\imgdir/enet_fig.png}
+ \end{frame}
 
+% Findings II
+\begin{frame}
+  \frametitle{Random forest model: Variable importance}
+    \centering
+        \includegraphics[scale = 0.35]{\imgdir/rf_vi.png}
+ \end{frame}
+
+% Takeaways/Conclusions
+\begin{frame}
+  \frametitle{Discussion\slash conclusion}
+  \begin{block}{Elastic net model}
+    \begin{itemize}
+    \item Expected predictors 
+      \begin{itemize}
+         \item Predominant degree awarded, Bachelor's (positive)
+         \item Level of institution, 4-year (positive)
+      \end{itemize}
+    \item Unexpected predictors
+       \begin{itemize}
+         \item Total outstanding federal direct loan balance (positive)
+         \item Undergraduate federal student loan dollar-based 1-year
+           repayment rate borrower count (negative)
+      \end{itemize}    
+    \end{itemize}
+  \end{block}
+  \begin{block}{Random forest model}
+    \begin{itemize}
+    \item Variable importance
+      \begin{itemize}
+        \item Level of credential (Undergraduate certificate or
+          diploma /& Bachelor's degree)
+        \item Median family income
+        \item Average family income for independent students
+       \end{itemize}
+    \end{itemize}
+   \end{block}    
+\end{frame}
+ 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % THANK YOU
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
