@@ -40,7 +40,7 @@
 \addbibresource{\bibdir/csc_research.bib}
 
 % figures/tables
-\includepdf[pages=-]{\figdir/tables_figures_references.pdf}
+\AtEndDocument{\includepdf[pages=-]{\figdir/tables_figures_references.pdf}}
 
 % author information
 \title{Employing Machine-Learning Approaches in Predicting Incomes of Recent College Graduates}
@@ -74,7 +74,7 @@ results of this project provide critical insight for state/federal
 policymakers to orient resources in improving labor market outcomes
 for recent graduates.
 
-\Vspace{5mm}
+\vspace{5mm}
 
 keywords: \emph{machine-learning, earnings premiums, market returns to college}
 
