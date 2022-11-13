@@ -296,39 +296,6 @@ models---elastic net and random forest---to identify the strongest
 predictors and build robust models of program-level income
 \parencite{Hastie_etal_2016, Kuhn_Silge_2022}.
 
-\section*{The Tidymodels philosophy}
-
-Our approach to data processing and model selection is informed by
-\textcite{Kuhn_Silge_2022}'s Tidymodels framework. This framework
-explains the normative process of data manipulation to model
-selection to performance evaluation as step-by-step instructions of a
-recipe. In our project, this begins by performing a pipeline of
-pre-processing work on our merged College Scorecard/ACS dataset. This
-pipeline delineates the steps or functions in R that are (1) dropping privacy
-suppressed/missing data elements, (2) recoding categorical data to
-dummy-coded indicator variables, and (3) removing zero variance/highly
-correlated predictors. Once completed, the dataset will be associated
-with a ``recipe'' object in our RStudio environment. 
-
-Next, we partition our original dataset into two subsets: a training
-set for model building and a test set for model performance
-evaluation.  We then perform k-fold cross validation on the training
-set data specifically, recursively splitting the training data into 20
-separate data sets to train and average across models. After deciding
-upon the best model (using RMSE as our performance metric), we use it
-to predict program-level earnings using the held-out testing
-data. These procedures (training/test sets  and cross-validation) help
-mitigate issues of overfitting that can bias results too
-closely to particular samples.
-
-% explain tuning grid for selecting best hyperparameters next %
-
-The entire process from recipe to model selection is defined in a
-workflow object in our RStudio environment. This workflow object
-instructs RStudio to perform the aforementioned steps (data recoding,
-model fitting with regression formula, etc.) sequentially, all with
-differently samples sets of data over a large tuning grid.
-
 For our models, we use two regression-based, machine-learning methods:
 elastic net and random forest. Elastic net regularization combines
 LASSO and ridge regression penalties to remove non-predictive
@@ -340,7 +307,6 @@ defined for both methods:
 
 \[y_i = \alpha + c_i\gamma + \epsilon_i\]
 
-\pagebreak
 
 \noindent where \newline $y_i$ is the outcome variable (median
 earnings of graduates one year after graduation)\newline $\alpha$ is
@@ -358,6 +324,60 @@ modeling approaches we identify variables in the Scorecard data set
 that are highly predictive indicators of our dependent variable of
 interest: median earnings from graduates of the program after one
 year.
+
+\subsection*{The Tidymodels Philosophy}
+
+Our approach to data processing and model selection is informed by
+\textcite{Kuhn_Silge_2022}'s Tidymodels framework. This framework
+explains the normative process of data manipulation to model selection
+to performance evaluation as step-by-step instructions of a recipe. In
+our project, this begins by performing a pipeline of pre-processing
+work on our merged College Scorecard/ACS dataset. This pipeline
+delineates the steps or functions in R that are (1) dropping privacy
+suppressed/missing data elements, (2) recoding categorical data to
+dummy-coded indicator variables, and (3) removing zero variance/highly
+correlated predictors. Once completed, the dataset will be associated
+with a ``recipe'' object in our RStudio environment. 
+
+Next, we partition our original dataset into two subsets: a training
+set for model building and a test set for model performance
+evaluation.  We then perform k-fold cross validation on the training
+set specifically, recursively splitting the training set into 20
+separate data sets to train and average across models. After deciding
+upon the best model (using RMSE as our performance metric), we use it
+to predict program-level earnings using the held-out testing
+data. These procedures (training/test sets and cross-validation) help
+mitigate issues of overfitting that can bias results too closely to
+particular samples.
+
+Model selection is facilitated by a tuning grid, defined by the
+researcher to experiment with tuning the model's hyperparameters. Our
+hyperparameters of interest in performing elastic net regularization
+are penalty and mixture; the tuning grid constructed will test various
+models (built over resampled data sets) with different value
+combinations (between 0 and 1) for both the penalty and mixture
+arguments. The values most adept at producing the model with the
+lowest RMSE is identified for final model selection. The function
+select\_best() will ease this process, and finalize\_model() will marry
+both the random forest algorithm /& best-performing hyperparameters
+for use on the testing data set.
+
+Our random forest model selection works in a similiar fashion, tuning
+the min\_n (minimum node size) and mtry (number of sampled covariates
+in a tree) arguments over an integer-defined grid. This integer
+indicates how many sets of parameters should be tested over the
+resamples of the data achieved via cross-validation. With slight
+changes to the engine (software) used for the model, we can perform
+the same tuning process and use select\_best() to identify the optimal
+hyperparameters for our model. Utilizing the finalize\_model() function
+will help us arrive to our principal model of variable importance.
+
+The entire process from recipe to model selection is defined in a
+workflow object in our RStudio environment. This workflow object
+instructs RStudio to perform the aforementioned steps (data recoding,
+model fitting with regression formula, hyperparameter tuning)
+sequentially to arrive at the best-performing models for each
+regression-based method.
 
 
 \section*{Data}
