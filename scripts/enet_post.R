@@ -2,10 +2,11 @@
 
 library(tidyverse)
 library(tidymodels)
+library(here)
 
 cb_df<-read_rds(here("data","cleaned","cb_df.Rds"))
 
-load("earn_wf_fit.Rdata")
+load(here("data","cleaned","earn_wf_fit.Rdata"))
 
 earn_wf_fit%>%
   collect_metrics()
@@ -41,9 +42,8 @@ earn_wf<-earn_wf%>%
   add_recipe(earn_recipe)
 
 ## Add enet model
-enet_fit<-
-  linear_reg(penalty=tune(),
-             mixture=tune()) %>%
+enet_fit<-linear_reg(penalty=tune(),
+                     mixture=tune()) %>%
   set_engine("glmnet")
 
 ## Add model to workflow
@@ -52,18 +52,20 @@ earn_wf<-earn_wf%>%
 
 
 ## Model fit
-gg<-earn_wf_fit%>%
+enet_fit <- earn_wf_fit%>%
   unnest(.metrics)%>%
   filter(.metric=="rmse")%>%
   mutate(tune_id=paste0("penalty=",prettyNum(penalty),
                         ", mixture=",prettyNum(mixture))) %>%
   select(tune_id,.estimate)%>%
-  rename(RMSE=.estimate)%>%
-  ggplot(aes(x=RMSE,color=tune_id,fill=tune_id))+
-  geom_density(alpha=.1)+
-  scale_x_continuous(labels=dollar_format())
+  rename(RMSE=.estimate)
 
-save(gg,file = "enet_fit.Rdata")
+## %>%
+##   ggplot(aes(x=RMSE,color=tune_id,fill=tune_id))+
+##   geom_density(alpha=.1)+
+##   scale_x_continuous(labels=dollar_format())
+
+save(enet_fit,file = here("data","cleaned","enet_fit.Rdata"))
 
 ## Variable Chart
 
@@ -86,11 +88,12 @@ final_enet<- finalize_workflow(
     lowest_rmse
   )
 
-final_enet<-final_enet%>%
-fit(cb_df)
+final_enet<-final_enet%>%fit(cb_df)
 
 
-vi_final<-final_enet%>%extract_fit_parsnip()%>%vi(scale=TRUE)
+vi_final<-final_enet%>%extract_fit_parsnip()%>%vip::vi(scale=TRUE)
+
+save(vi_final, file = here("data","cleaned","enet_vi_final.Rdata"))
 
 gg<-vi_final%>%
   slice(1:25)%>%

@@ -51,13 +51,11 @@ tune_wf <- workflow() %>%
   add_recipe(earn_recipe) %>%
   add_model(tune_spec)
 
-doParallel::registerDoParallel()
+doParallel::registerDoParallel(cores = 20)
 
-tune_res <- tune_grid(
-  tune_wf,
-  resamples = cb_rs,
-  grid = 20
-)
+tune_res <- tune_grid(tune_wf,
+                      resamples = cb_rs,
+                      grid = 20)
 
 save(tune_res,file="tune_res.Rdata")
 
@@ -95,7 +93,7 @@ vi_final_rf<-final_rf %>%
   fit(earn_mdn_hi_1yr ~ .,
       data = juice(earn_prep)
   ) %>%
-  vi(scale=TRUE)
+  vip::vi(scale=TRUE)
 
 save(vi_final_rf,file="vi_final_rf.Rdata")
 

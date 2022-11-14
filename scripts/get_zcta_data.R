@@ -1,202 +1,205 @@
 ################################################################################
 ##
 ##
+##
 ################################################################################
 
 ## libraries
-libs <- c("tidyverse", "tidycensus")
+libs <- c("tidyverse", "tidycensus", "here")
 sapply(libs, require, character.only = TRUE)
 
 ## paths
-dat_dir <- here::here("data")
+dat_dir <- here("data")
 cln_dir <- file.path(dat_dir, "cleaned")
+
+## -----------------------------------------------------------------------------
+## ACS settings
+## -----------------------------------------------------------------------------
 
 ## set Census API key based on user
 ## NB: I would recommend placing the key in the ~/.Renviron file as
-##
 ## CENSUS_API_KEY=<...key...> (no need for quotation marks)
 acs_key <- Sys.getenv("CENSUS_API_KEY")
 
 ## set key
 census_api_key(acs_key)
 
-## set geography
-my_geo <- "zcta"
+## set geography, year, and data set
+acs_geog <- "zcta"
+acs_year <- 2019
+acs_data <- "acs5"
 
-v19 <- load_variables(2019, "acs5", cache = TRUE)
+## load all variables for year
+acs_all_vars <- load_variables(acs_year, acs_data, cache = TRUE)
 
-var_list <- paste0("B15002_",c("001",
-                               "015",
-                               "016",
-                               "017",
-                               "018",
-                               "032",
-                               "033",
-                               "034",
-                               "035"))
+## -----------------------------------------------------------------------------
+## education
+## -----------------------------------------------------------------------------
 
-## education data pull
-educ <- get_acs(geography = my_geo,
-                variables = var_list,
-                output = "wide",
-                year = 2019)
+## create variable list
+var_list <- paste0("B15002_", str_pad(c(1,15:18,32:35), 3, pad = "0"))
 
-## lower variable names
-names(educ) <- tolower(names(educ))
-
-## munge data
-educ <- educ |>
-  group_by(name) |>
-  mutate(college_educ=((b15002_015e +
-                          b15002_016e +
-                          b15002_017e +
-                          b15002_018e +
-                          b15002_032e +
-                          b15002_033e +
-                          b15002_034e +
-                          b15002_035e) / b15002_001e) * 100) |>
+## data pull
+df_educ <- get_acs(geography = acs_geog,
+                   variables = var_list,
+                   output = "wide",
+                   year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
+  mutate(college_educ = rowSums(across(b15002_015e: b15002_035e)),
+         college_educ = college_educ / b15002_001e * 100) |>
+  ## subset
   select(name, college_educ)
 
-## income data
-var_list <- paste0("B19001_", c("001",
-                                "013",
-                                "014",
-                                "015",
-                                "016",
-                                "017"))
+## -----------------------------------------------------------------------------
+## income
+## -----------------------------------------------------------------------------
 
-income <- get_acs(my_geo,
-                  variables = var_list,
-                  output = "wide",
-                  year = 2019)
+## create variable list
+var_list <- paste0("B19001_", str_pad(c(1,13:17), 3, pad = "0"))
 
-names(income) <- tolower(names(income))
-
-income <- income|>
-  group_by(name) |>
-  mutate(income_75 = ((
-    b19001_013e +
-      b19001_014e +
-      b19001_015e +
-      b19001_016e +
-      b19001_017e) / b19001_001e) * 100) |>
+## data pull
+df_income <- get_acs(geography = acs_geog,
+                     variables = var_list,
+                     output = "wide",
+                     year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
+  mutate(income_75 = rowSums(across(b19001_013e:b19001_017e)),
+         income_75 = income_75 / b19001_001e * 100) |>
+  ## subset
   select(name, geoid, income_75)
 
-## health data
-var_list <- paste0("B27001_", c("001",
-                                "004",
-                                "007",
-                                "010",
-                                "013",
-                                "016",
-                                "019",
-                                "022",
-                                "025",
-                                "028",
-                                "032",
-                                "035",
-                                "038",
-                                "041",
-                                "044",
-                                "047",
-                                "041",
-                                "050",
-                                "053",
-                                "056"))
+## -----------------------------------------------------------------------------
+## health
+## -----------------------------------------------------------------------------
 
-health <- get_acs(my_geo,
-                  variables = var_list,
-                  output = "wide",
-                  year = 2019)
+## create variable list
+var_list <- paste0("B27001_", c(str_pad(seq(1,28,3), 3, pad = "0"),
+                                str_pad(seq(32,56,3), 3, pad = "0")))
 
-names(health) <- tolower(names(health))
-
-health <- health |>
-  select(-ends_with("m")) |> # estimates only (no moe values)
-  mutate(insured_num = rowSums(across(b27001_004e:b27001_056e))) |>
-  mutate(perc_insured = (insured_num / b27001_001e) * 100) |>
+## data pull
+df_health <- get_acs(geography = acs_geog,
+                     variables = var_list,
+                     output = "wide",
+                     year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
+  mutate(perc_insured = rowSums(across(b27001_004e:b27001_056e)),
+         perc_insured = perc_insured / b27001_001e * 100) |>
+  ## subset
   select(name, perc_insured)
 
+## -----------------------------------------------------------------------------
 ## labor force
+## -----------------------------------------------------------------------------
 
-var_list <- paste0("B23025_",c("001",
-                               "002"))
+## create variable list
+var_list <- paste0("B23025_", str_pad(c(1,2), 3, pad = "0"))
 
-labor <- get_acs(my_geo,
-                 variables = var_list,
-                 output = "wide",
-                 year = 2019)
-
-names(labor) <- tolower(names(labor))
-
-labor <- labor |>
-  group_by(name) |>
-  mutate(perc_in_labor_force = (b23025_002e / b23025_001e) * 100) |>
-  select(name, perc_in_labor_force)
-
-## mobility
-var_list <- paste0("B07003_", c("001", "013"))
-
-mobility <- get_acs(my_geo,
+## data pull
+df_labor <- get_acs(geograph = acs_geog,
                     variables = var_list,
                     output = "wide",
-                    year = 2019)
+                    year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
+  mutate(perc_in_labor_force = b23025_002e / b23025_001e * 100) |>
+  ## subset
+  select(name, perc_in_labor_force)
 
-names(mobility) <- tolower(names(mobility))
+## -----------------------------------------------------------------------------
+## mobility
+## -----------------------------------------------------------------------------
 
-mobility <- mobility |>
-  group_by(name) |>
-  mutate(perc_moved_in = (b07003_013e / b07003_001e) * 100)|>
+## create variable list
+var_list <- paste0("B07003_", str_pad(c(1,13), 3, pad = "0"))
+
+## data pull
+df_mobility <- get_acs(geography = acs_geog,
+                       variables = var_list,
+                       output = "wide",
+                       year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
+  mutate(perc_moved_in = b07003_013e / b07003_001e * 100) |>
+  ## subset
   select(name, perc_moved_in)
 
+## -----------------------------------------------------------------------------
 ## commute
-var_list <- paste0("B08134_", c("001","007","008","009","010"))
+## -----------------------------------------------------------------------------
 
-commute <- get_acs(my_geo,
-                   variables = var_list,
-                   output = "wide",
-                   year = 2019)
+## create variable list
+var_list <- paste0("B08134_", str_pad(c(1,7:10), 3, pad = "0"))
 
-names(commute) <- tolower(names(commute))
-
-commute <- commute |>
-  select(-ends_with("m")) |> # estimates only (no moe values)
-  mutate(commute_num = rowSums(across(b08134_007e:b08134_010e))) |>
-  mutate(perc_commute_30p = (commute_num / b08134_001e) * 100) |>
+## data pull
+df_commute <- get_acs(geography = acs_geog,
+                      variables = var_list,
+                      output = "wide",
+                      year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
+  mutate(perc_commute_30p = rowSums(across(b08134_007e:b08134_010e)),
+         perc_commute_30p = (perc_commute_30p / b08134_001e) * 100) |>
+  ## subset
   select(name, perc_commute_30p)
 
-## homeownership
-var_list <- paste0("B25008_", c("001","002"))
+## -----------------------------------------------------------------------------
+## commute
+## -----------------------------------------------------------------------------
 
-homeown <- get_acs(my_geo,
-                   variables = var_list,
-                   output = "wide",
-                   year = 2019)
+## create variable list
+var_list <- paste0("B25008_", str_pad(c(1:2), 3, pad = "0"))
 
-names(homeown) <- tolower(names(homeown))
-
-homeown <- homeown |>
+## data pull
+df_homeown <- get_acs(geography = acs_geog,
+                      variables = var_list,
+                      output = "wide",
+                      year = acs_year) |>
+  ## lower names
+  rename_all(tolower) |>
+  ## select estimates only
+  select(-ends_with("m")) |>
+  ## munge
   mutate(perc_homeown = (b25008_002e / b25008_001e) * 100) |>
+  ## subset
   select(name, perc_homeown)
 
+## -----------------------------------------------------------------------------
+## joins, final munge, and save
+## -----------------------------------------------------------------------------
 
 ## joins
-area_data <- educ |>
-  left_join(homeown, by = "name") |>
-  left_join(income, by = "name") |>
-  left_join(mobility, by = "name") |>
-  left_join(labor, by = "name")
-
-## final munge
-area_data <- area_data |>
-  ungroup() |>
+df <- list(df_educ, df_income, df_health, df_labor, df_mobility,
+           df_commute, df_homeown) |>
+  reduce(left_join, by = "name") |>
+  ## rename
   rename(zip = geoid) |>
+  ## subset
   select(zip, college_educ, perc_homeown, income_75,
          perc_moved_in, perc_in_labor_force)
 
-
 ## save data
-write_rds(area_data, file = file.path(cln_dir, "zip_data.rds"))
+write_rds(df, file = file.path(cln_dir, "zip_data.rds"))
 
 ## -----------------------------------------------------------------------------
 ## END SCRIPT
