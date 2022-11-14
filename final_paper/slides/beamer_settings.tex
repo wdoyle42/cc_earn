@@ -1,0 +1,168 @@
+% ==============================================================================
+%
+% [ PROJ ] ASHE presentation
+% [ FILE ] beamer_settings.tex
+% [ AUTH ] Benjamin Skinner, Olivia Morales, William Doyle
+% [ INIT ] 31 October 2022
+%
+% ==============================================================================
+
+% --------------------------------------
+% personalization settings
+% --------------------------------------
+
+% general links
+\newcommand{\twr}{https://twitter.com/}
+\newcommand{\mt}{mailto:}
+\newcommand{\web}{https://}
+\newcommand{\git}{https://github.com/}
+
+% links for BS
+\newcommand{\bts}{btskinner.io}
+\newcommand{\webbs}{\web\bts}
+\newcommand{\twrbs}{btskinner}
+\newcommand{\gitbs}{btskinner}
+\newcommand{\mtbs}{btskinner@coe.ufl.edu}
+
+% links for OM
+\newcommand{\onm}{}
+\newcommand{\webom}{}
+\newcommand{\twrom}{olivianmo}
+\newcommand{\gitom}{onmorales23}
+\newcommand{\mtom}{oliviamorales@ufl.edu}
+
+% links for WD
+\newcommand{\wrd}{my.vanderbilt.edu/willdoyle}
+\newcommand{\webwd}{\web\wrd}
+\newcommand{\twrwd}{wdoyle42}
+\newcommand{\gitwd}{wdoyle42}
+\newcommand{\mtwd}{w.doyle@vanderbilt.edu}
+
+% replication code link
+% \newcommand{\gitrep}{btskinner/holc\_bb\_rep}
+
+% directories
+\newcommand{\figdir}{../figures}
+\newcommand{\tabdir}{../tables}
+\newcommand{\imgdir}{../_img}
+\newcommand{\bibdir}{../bib}
+
+% logos
+\newcommand{\brlogo}{\imgdir/UF_Monogram.eps}
+\newcommand{\primarylogo}{\imgdir/College-of-Education-UF.eps}
+
+% --------------------------------------
+% math macros
+% --------------------------------------
+
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\bBeta}{\boldsymbol{B}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bdelta}{\boldsymbol{\delta}}
+\newcommand{\boldeta}{\boldsymbol{\eta}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\bpsi}{\boldsymbol{\psi}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bW}{\mathbf{W}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bZ}{\mathbf{Z}}
+
+% --------------------------------------
+% programming macros
+% --------------------------------------
+
+\newcommand{\itemcolor}[1]{
+    \renewcommand{\makelabel}[1]{\color{#1}\hfil ##1}
+}
+
+% document background
+\newcommand{\bg}[1]{
+  \setbeamertemplate{background canvas}
+  {\makebox[\paperwidth][c]{\begin{tikzpicture}
+      \node[opacity=.22]{
+        \includegraphics[width=\paperwidth]{\imgdir/#1}};
+    \end{tikzpicture}}}
+}
+
+% --------------------------------------
+% formatting macros
+% --------------------------------------
+
+% spacing
+\newcommand{\hs}{\hspace{.25em}}
+
+% color macros
+\definecolor{black}{RGB}{0,0,0} % none more black (Pantone Black C)
+\definecolor{white}{RGB}{255,255,255} % none more white
+\definecolor{uf_blue}{RGB}{0,33,165} % UF blue (PMS 287; #0021A5)
+\definecolor{uf_orange}{RGB}{250,70,22} % UF orange (PMS 172; #FA4616)
+\definecolor{uf_blue_m}{RGB}{108,154,195} % muted UF blue (PMS 216-5; #6C9AC3)
+\definecolor{uf_orange_m}{RGB}{226,143,65} % muted UF orange (PMS 46-3; #E28F41)
+\definecolor{uf_green}{RGB}{94,142,63} % UF green (PMS 293-2; #5E8E3F)
+\definecolor{uf_yellow}{RGB}{252,175,23} % muted UF orange (PMS 18-1; #FCAF17)
+\definecolor{tw_blue}{RGB}{29,161,242} % twitter blue (#1DA1F2)
+
+% set colors
+\setbeamercolor{title}{fg = black}
+\setbeamercolor{frametitle}{fg = black}
+\setbeamercolor{framesubtitle}{fg = black}
+\setbeamercolor{normal text}{fg = black}
+\setbeamercolor{description item}{fg = uf_orange}
+\setbeamercolor{block title}{fg = black}
+\setbeamercolor{button}{bg = uf_blue}
+\setbeamercolor{enumerate item}{fg = uf_blue}
+\setbeamertemplate{itemize item}{\color{uf_yellow}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\footnotesize\color{uf_yellow}$\blacktriangleright$}
+\setbeamertemplate{itemize/enumerate subbody begin}{\footnotesize}
+
+% headers
+\setbeamerfont{framesubtitle}{series = \itshape}
+
+% fonts 
+\setmainfont{Avenir Light} 
+\setsansfont{Avenir Light} 
+\setmonofont{Menlo}
+
+% beamer theme and options
+\usetheme{default}
+\beamertemplatenavigationsymbolsempty
+\setbeamercovered{transparent}
+% \addtobeamertemplate{frametitle}{}{\vspace{-1.5em}}
+% \addtobeamertemplate{framesubtitle}{}{\vspace{-1em}}
+% \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+% add lower right logo; twitter handles
+\addtobeamertemplate{frametitle}{}{%
+  \vspace*{-0.5em}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[anchor=south east, xshift = -.2em, yshift = .2em]
+    at (current page.south east)
+    {\includegraphics[height=.9em]{\brlogo}};
+    \node[anchor=south west, xshift = .2em, yshift = .2em]
+    at (current page.south west)
+    {\href{\twr\twrbs}{\footnotesize\textcolor{tw_blue}{\faTwitter}\twrbs}
+    \href{\twr\twrom}{\footnotesize\textcolor{tw_blue}{\faTwitter}\twrom}
+    \href{\twr\twrwd}{\footnotesize\textcolor{tw_blue}{\faTwitter}\twrwd}};
+  \end{tikzpicture}
+}
+
+% make bibliography smaller
+\renewcommand*{\bibfont}{\tiny}
+
+% make citations smaller
+\makeatletter
+\DeclareRobustCommand\citep
+{\begingroup\scriptsize\NAT@swatrue\let\NAT@ctype\z@\NAT@partrue
+  \@ifstar{\NAT@fulltrue\NAT@citetp}{\NAT@fullfalse\NAT@citetp}}
+\makeatother
+
+% table alignment
+\newcommand{\RR}{\raggedright\arraybackslash}
+\newcommand{\RL}{\raggedleft\arraybackslash}

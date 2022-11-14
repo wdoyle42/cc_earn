@@ -1,0 +1,257 @@
+% ==============================================================================
+%
+% [ PROJ ] ASHE presentation
+% [ FILE ] slides.tex
+% [ AUTH ] Benjamin Skinner, Olivia Morales, William Doyle
+% [ INIT ] 31 October 2022
+%
+% ==============================================================================
+
+% --------------------------------------
+% document settings
+% --------------------------------------
+
+% document class
+\documentclass[aspectratio=169, t, 10pt]{beamer}
+
+% packages
+\usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\usepackage{datetime}
+\usepackage{tikz}
+\usepackage{forest}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage{url}
+\usepackage{amstext}
+\usepackage[justification=raggedright]{caption}
+\usepackage[flushleft]{threeparttable}
+\usepackage{pgf}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage[fixed]{fontawesome5}
+\usepackage[first=1, last=100]{lcg}
+\usepackage{xifthen}
+\usepackage{ulem}
+\usepackage{longtable}
+\usepackage{multicol}
+
+% tikz settings
+\usetikzlibrary{positioning,
+  shapes.multipart,
+  calc,
+  decorations.pathreplacing,
+  decorations.text,
+  calligraphy,
+  arrows}
+
+% --------------------------------------
+% external inputs
+% --------------------------------------
+
+\input{./beamer_settings.tex}
+
+% --------------------------------------
+% repeated text
+% --------------------------------------
+
+\newcommand{\fignote}[1]{\caption*{\tiny {\bfseries Note.} #1}}
+
+% --------------------------------------
+% begin document
+% --------------------------------------
+
+\begin{document}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% title slide
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\title{\LARGE Employing Machine-Learning Approaches \\ to Predict Incomes 
+of Recent College Graduates} 
+\date{16 November 2022 \\
+Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
+\author{%
+  \begin{tabular}{ccc}
+    {\Large Benjamin T. Skinner}
+    & {\Large Olivia Morales}
+    & {\Large William R. Doyle} \\
+    University of Florida & University of Florida & Vanderbilt University \\
+    \href{\twr\twrbs}{\textcolor{tw_blue}{\faTwitter}\hs\twrbs} &
+    \href{\twr\twrom}{\textcolor{tw_blue}{\faTwitter}\hs\twrom} &
+    \href{\twr\twrwd}{\textcolor{tw_blue}{\faTwitter}\hs\twrwd}  & \\
+  \end{tabular}
+}
+
+\institute{\includegraphics[width = .5\textwidth]{\primarylogo}}
+
+{
+  \bg{uf_coe_1}
+  \begin{frame}
+    \titlepage
+  \end{frame}
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% SLIDES
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+% Introduction
+\begin{frame}
+  \frametitle{The Prediction Business for Returns to Higher Education}
+  \begin{block}{What we know}
+    \begin{itemize}
+    	\item Wealth of scholarship to support economic returns from
+          higher education
+          \citep{card:1995, Card:1999, Card:2001, doyle2016educearn, Oreopoulous_Petronijevic_2013}
+    	\item Prior analyses limited by access to institution-level data not widely available 
+   	 \begin{itemize}
+    		\item The publication of the College Scorecard (2015) changed the higher education \\
+		research landscape, with national institutional-level
+                data now publicly accessible
+                \citep{obama_2013}
+   	 \end{itemize}
+    \end{itemize}
+  \end{block}
+  \begin{block}{Examining existing research}
+    \begin{itemize}
+    \item Standard econometric approaches to estimating earnings \\
+    are vulnerable to researcher bias and produce less accurate predictions
+    \item Machine learning methods provide a more useful alternative (predictions \\
+    made algorithmically, based on features of the data)
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% Our focus/guiding questions
+\begin{frame}
+  \frametitle{Our focus \& guiding research questions}
+  \begin{block}{Focus}
+    \begin{itemize}
+      \item Marriage of the College Scorecard data \& machine learning methods to
+        predict recent graduates' incomes with increased accuracy
+    \end{itemize}
+  \end{block}
+  \begin{block}{Research questions}
+    \begin{enumerate}
+        \item What institutional \slash  program level variables are most
+          predictive of median first-year earnings?
+        \item What are the patterns of association (positive \slash negative)
+          for these variables?
+    \end{enumerate}
+   \end{block}
+\end{frame}
+
+% Data
+\begin{frame}
+  \frametitle{Data}
+    \begin{block}{College Scorecard}
+      \begin{itemize}
+      \item 2019-2020 
+      \item Includes over 2,000 variables for 6,700 accredited higher
+        education institutions (HEIs) in the U.S.
+      \item Significant portions of the data are privacy suppressed
+      \end{itemize}
+    \end{block}
+  \begin{block}{American Community Survey (ACS)}
+    \begin{itemize}
+    \item 2015-2019
+    \item Geography of interest: County level (using FIPS)
+    \item Matching HEIs with unique county FIPS codes
+    \item Helps recover information lost from missing data in the Scorecard
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+% Tidymodels explanation
+\begin{frame}
+  \frametitle{Data preprocessing and model building with Tidymodels}
+  \begin{block}{Tidymodels as a framework}
+    \begin{itemize}
+    \item Proposed by \citet{Kuhn_Silge_2022}, Tidymodels provides a
+      succinct framework for preprocessing data to eventually use in
+      fitting successive models and delineating overall workflow
+      \begin{itemize}
+        \item In our project, our models perform elastic net
+          regularization and random forest regression to estimate the
+          predictive capabilites of variables in the College Scorecard
+          data
+      \end{itemize}
+     \end{itemize}
+   \end{block}
+   \begin{block}{}
+     \vspace{-0.25cm}%adapt
+     \centering
+        \includegraphics[scale = 0.4]{\imgdir/tidymodels_example.png}
+      \end{block}   
+\end{frame}
+
+% Methodology/Model Specification
+\begin{frame}
+  \frametitle{Methodology and Model Specification}
+  \begin{equation}
+     y_i = \alpha + c_i\gamma + \epsilon_i\notag\\
+   \end{equation}
+   \noindent where
+   \newline
+   \newline $y_i$ is the outcome variable (median
+   earnings of graduates one year after graduation)
+   \newline $\alpha$ is the intercept
+   \newline $c_i$ is a vector of covariates
+   \newline $\gamma$ is a vector of coefficients for those covariates
+   \newline $\epsilon_i$ is an error term
+\end{frame}
+
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% THANK YOU
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+{
+  \bg{uf_coe_6}
+  \begin{frame}
+    \begin{center}
+      \huge
+      \vfill
+      Thank You! \\
+      \vfill
+      % \large
+      % Replication files \\
+      \small
+      % \begin{tabular}{l}
+      %   \href{\git\gitrep}{\faCode\hs\git\gitrep} \\
+      % \end{tabular}
+      % \vfill
+      \begin{tabular}{lll}
+        {\Large Olivia N. Morales}  \\
+        \href{\mt\mtom}{\faEnvelope\hs\mtom}\\
+        \href{\twr\twrom}{\faTwitter\hs\twrom} \\
+        \href{\git\gitom}{\faGithub\hs\gitom} \\
+      \end{tabular}
+      \vfill
+      \includegraphics[width=.5\linewidth]{\primarylogo}
+      \vfill
+    \end{center}
+  \end{frame}
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% REFERENCES
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{frame}[allowframebreaks]
+\frametitle{References}
+\bibliographystyle{apacite}
+\bibliography{\bibdir/csc_research.bib}
+\end{frame}
+
+\end{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
