@@ -1,6 +1,6 @@
 # Random forest postestimation
 
-load("tune_res.Rdata")
+load(here("data","cleaned","tune_res.Rdata"))
 
 tune_res%>%
   collect_metrics() %>%
