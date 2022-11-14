@@ -39,10 +39,7 @@
 \usepackage{ulem}
 \usepackage{longtable}
 \usepackage{multicol}
-<<<<<<< HEAD
-=======
 \usepackage{amsmath}
->>>>>>> bs_dev
 
 % tikz settings
 \usetikzlibrary{positioning,
@@ -65,12 +62,9 @@
 
 \newcommand{\fignote}[1]{\caption*{\tiny {\bfseries Note.} #1}}
 
-<<<<<<< HEAD
-=======
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
->>>>>>> bs_dev
 % --------------------------------------
 % begin document
 % --------------------------------------
@@ -93,11 +87,7 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     University of Florida & University of Florida & Vanderbilt University \\
     \href{\twr\twrbs}{\textcolor{tw_blue}{\faTwitter}\hs\twrbs} &
     \href{\twr\twrom}{\textcolor{tw_blue}{\faTwitter}\hs\twrom} &
-<<<<<<< HEAD
-    \href{\twr\twrwd}{\textcolor{tw_blue}{\faTwitter}\hs\twrwd}  & \\
-=======
     \href{\twr\twrwd}{\textcolor{tw_blue}{\faTwitter}\hs\twrwd} \\
->>>>>>> bs_dev
   \end{tabular}
 }
 
@@ -116,11 +106,7 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
 
 % Introduction
 \begin{frame}
-<<<<<<< HEAD
-  \frametitle{The Prediction Business for Returns to Higher Education}
-=======
   \frametitle{The prediction business for returns to higher education}
->>>>>>> bs_dev
   \begin{block}{What we know}
     \begin{itemize}
     	\item Wealth of scholarship to support economic returns from
@@ -147,11 +133,7 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
 
 % Our focus/guiding questions
 \begin{frame}
-<<<<<<< HEAD
-  \frametitle{Our focus \& guiding research questions}
-=======
   \frametitle{Our focus and guiding research questions}
->>>>>>> bs_dev
   \begin{block}{Project focus}
     \centering
     \includegraphics[scale = 0.2]{\imgdir/project_flow.jpg}
@@ -211,32 +193,6 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     \begin{itemize}
     \item Combines LASSO/ridge regression penalties to mitigate issues
       of bias and variance introduction in your statistical model
-<<<<<<< HEAD
-    \item Helpful in producing more parsimonious models (removes
-      irrelevant predictors)
-    \end{itemize}
-  \end{block}
-  \begin{block}{Random forests}
-    \begin{itemize}
-      \item Ensemble machine learning method particularly popular in
-        gauging variable importance in a regression model
-      \item Randomly samples covariates in a regression model, splits
-        observations on covariates to maximize reduction of RMSE 
-      \item Model builds successive trees to eventually including all
-        covariates in the model, averaging over all trees to determine
-        variable importance (reduction in RMSE)
-      \end{itemize}
-   \end{block}
-\end{frame}
-      
-      
-% Random forest: A visualization
-\begin{frame}
-  \frametitle{Random forest: A visualization}\citep{koehrsen_2018}
-    \centering
-        \includegraphics[width=.5\linewidth]{\imgdir/rf_viz.png}
- \end{frame}
-=======
     \item Helpful in producing more parsimonious models
       \begin{itemize}
       \item removes irrelevant predictors
@@ -276,30 +232,19 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     \end{column}
   \end{columns}
 \end{frame}
->>>>>>> bs_dev
 
 % Findings I
 \begin{frame}
   \frametitle{Elastic net regularization}
     \centering
-<<<<<<< HEAD
-        \includegraphics[width=.5\linewidth]{\imgdir/enet_fig.png}
-=======
         \includegraphics[width = .9\linewidth]{\imgdir/enet_fig.png}
->>>>>>> bs_dev
  \end{frame}
 
 % Findings II
 \begin{frame}
-<<<<<<< HEAD
-  \frametitle{Random forest model: Variable importance}
-    \centering
-        \includegraphics[scale = 0.35]{\imgdir/rf_vi.png}
-=======
   \frametitle{Random forest model: variable importance}
     \centering
         \includegraphics[width = .9\linewidth]{\imgdir/rf_vi.png}
->>>>>>> bs_dev
  \end{frame}
 
 % Takeaways/Conclusions
@@ -310,11 +255,7 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     \item Expected predictors 
       \begin{itemize}
          \item Level of credential, certificate/diploma (negative)
-<<<<<<< HEAD
-         \item Level of institution, 4-year (positive)
-=======
          \item Level of institution, 2-year (positive)
->>>>>>> bs_dev
       \end{itemize}
     \item Unexpected predictors
        \begin{itemize}
@@ -329,20 +270,12 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
     \item Variable importance
       \begin{itemize}
         \item Level of credential (Undergraduate certificate or
-<<<<<<< HEAD
-          diploma /& Bachelor's degree)
-=======
           diploma \& Bachelor's degree)
->>>>>>> bs_dev
         \item Median family income
         \item Average family income for independent students
        \end{itemize}
     \end{itemize}
-<<<<<<< HEAD
-   \end{block}    
-=======
    \end{block} 
->>>>>>> bs_dev
 \end{frame}
  
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -382,16 +315,10 @@ Association for the Study of Higher Education Annual Conference | Las Vegas, NV}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \begin{frame}[allowframebreaks]
-<<<<<<< HEAD
-\frametitle{References}
-\bibliographystyle{apacite}
-\bibliography{\bibdir/csc_research.bib}
-=======
   \frametitle{References}
   \tiny
   \bibliographystyle{apacite}
   \bibliography{\bibdir/csc_research.bib}
->>>>>>> bs_dev
 \end{frame}
 
 \end{document}
