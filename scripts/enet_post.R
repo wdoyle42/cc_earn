@@ -41,9 +41,8 @@ earn_wf<-earn_wf%>%
   add_recipe(earn_recipe)
 
 ## Add enet model
-enet_fit<-
-  linear_reg(penalty=tune(),
-             mixture=tune()) %>%
+enet_fit<-linear_reg(penalty=tune(),
+                     mixture=tune()) %>%
   set_engine("glmnet")
 
 ## Add model to workflow
@@ -86,11 +85,10 @@ final_enet<- finalize_workflow(
     lowest_rmse
   )
 
-final_enet<-final_enet%>%
-fit(cb_df)
+final_enet<-final_enet%>%fit(cb_df)
 
 
-vi_final<-final_enet%>%extract_fit_parsnip()%>%vi(scale=TRUE)
+vi_final<-final_enet%>%extract_fit_parsnip()%>%vip::vi(scale=TRUE)
 
 gg<-vi_final%>%
   slice(1:25)%>%

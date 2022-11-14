@@ -63,13 +63,10 @@ enet_grid<-expand_grid(penalty=seq(0,1,by=.333),
 earn_wf<-earn_wf%>%
   add_model(enet_fit)
 
-doParallel::registerDoParallel()
+doParallel::registerDoParallel(cores = 20)
 
-earn_wf_fit<-
-  tune_grid(
-    earn_wf,
-    resamples=cb_rs, ##resampling plan
-    grid=enet_grid
-  )
+earn_wf_fit<- tune_grid(earn_wf,
+                        resamples=cb_rs, ##resampling plan
+                        grid=enet_grid)
 
 save(earn_wf_fit,file = "earn_wf_fit.Rdata")
