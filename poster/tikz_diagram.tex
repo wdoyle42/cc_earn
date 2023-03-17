@@ -1,0 +1,142 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{verbatimbox}
+\usepackage[
+paperwidth=10in,
+paperheight=15in,
+margin=.4in,
+]{geometry}
+
+\usetikzlibrary{shapes,arrows,positioning}
+
+
+\begin{document}
+\pagestyle{empty}
+
+
+% Define block styles
+\tikzstyle{block} = [rectangle, draw, text width=12em, text centered,
+rounded corners, minimum height=4em]
+\tikzstyle{code} = [rectangle, draw, text width=23em,
+rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+
+% code examples
+\begin{myverbbox}[\footnotesize]{\setup}
+  ## libraries
+  library(tidyverse)
+  library(tidymodels)
+  library(parallel)
+  library(doParallel)
+  library(vip)
+\end{myverbbox}
+
+\begin{myverbbox}[\footnotesize]{\regcode}
+  ## regress median earnings after one year
+  ## against all available variables
+  formula <- ("earn_mdn_hi_1yr ~ .")
+\end{myverbbox}
+
+\begin{myverbbox}[\footnotesize]{\precode}
+  ## read in data 
+  df <- read_rds("cleaned_data.RDS")
+  ## preprocess using recipe
+  recipe <- recipe(df, formula) |>
+     step_zv(all_predictors()) |>
+     step_nzv(all_numeric_predictors()) |>
+     update_role(-opeid6,
+                 new_role = "predictor") |>
+     update_role(earn_mdn_hi_1yr,
+                 new_role = "outcome") |>
+     update_role(opeid6,
+                 new_role = "id variable") |>
+     step_naomit(all_predictors()) |>
+     step_other(all_nominal_predictors(),
+                threshold = .005) |>
+     step_dummy(all_nominal_predictors()) |>
+     step_zv(all_predictors(),
+             skip = TRUE) |>
+     step_nzv(all_numeric_predictors(),
+              skip = TRUE) |>
+     step_normalize(all_numeric_predictors()) |>
+     step_corr(all_numeric_predictors(),
+               skip = TRUE,
+               threshold = .95)
+\end{myverbbox}
+
+\begin{myverbbox}[\footnotesize]{\workcode}
+  ## set workflow set up above
+  prep <- prep(recipe)
+\end{myverbbox}
+
+\begin{myverbbox}[\footnotesize]{\tunecode}
+  ## set tuning specification
+  tune_spec <- rand_forest(mtry = tune(),
+                           trees = 1000,
+                           min_n = tune()) |>
+  set_mode("regression") |>
+  set_engine("ranger")
+  ## set tuning workflow
+  tune_wf <- workflow() |>
+     add_recipe(recipe) |>
+     add_model(tune_spec)
+  ## set number of available cores
+  registerDoParallel(cores = detectCores())
+  ## use 10-fold crossvalidation to tune
+  tune_res <- tune_grid(tune_wf,
+                        resamples = vfold_cv(df,
+                                             v = 10),
+                        grid = 20)
+\end{myverbbox}
+
+\begin{myverbbox}[\footnotesize]{\runcode}
+  ## select best tuning parameters based on RMSE
+  best_rmse <- select_best(tune_res,
+                           "rmse")
+  ## finalize the model using best tuning spec
+  final_rf <- finalize_model(tune_spec,
+                             best_rmse)
+  ## compute variable importance                          
+  vi_final_rf <- final_rf |>
+     set_engine("ranger",
+                importance = "permutation") |>
+      fit(earn_mdn_hi_1yr ~ .,
+          data = juice(prep)) |>
+  vi(scale=TRUE)
+\end{myverbbox}
+
+\begin{tikzpicture}[node distance = 2cm, auto]
+  % Place nodes
+  \node [block] (setup) {Setup};
+  \node [code, below right = 1em and 1em of setup] (setupcode) {\setup};
+  \node [block, below left = 1em and 1em of setupcode] (reg) {Define regression formula};
+  \node [code, below right = 1em and 1em of reg] (regcode) {\regcode};
+  \node [block, below left = 1em and 1em of regcode] (pre) {Preprocess data via
+    recipe};
+  \node [code, below right = 1em and 1em of pre] (precode) {\precode};
+  \node [block, below left = 1em and 1em of precode] (work) {Set workflow and
+    add recipe/model};
+  \node [code, below right = 1em and 1em of work] (workcode) {\workcode};
+  \node [block, below left = 1em and 1em of workcode] (tune) {Set tuning
+    grid/parallelization};
+  \node [code, below right = 1em and 1em of tune] (tunecode) {\tunecode};
+  \node [block, below left = 1em and 1em of tunecode] (run) {Run method with defined
+    workflow and tuning grid};
+  \node [code, below right = 1em and 1em of run] (runcode) {\runcode};
+  % Draw edges
+  \draw [line] (setup.east) to[out=-20, in=90] (setupcode.north);
+  \draw [line] (setupcode.south) to[out=-90, in=20] (reg.east);
+  \draw [line] (reg.east) to[out=-20, in=90] (regcode.north);
+  \draw [line] (regcode.south) to[out=-90, in=20] (pre.east);
+  \draw [line] (pre.east) to[out=-20, in=90] (precode.north);
+  \draw [line] (precode.south) to[out=-90, in=20] (work.east);
+  \draw [line] (work.east) to[out=-20, in=90] (workcode.north);
+  \draw [line] (workcode.south) to[out=-90, in=20] (tune.east);
+  \draw [line] (tune.east) to[out=-20, in=90] (tunecode.north);
+  \draw [line] (tunecode.south) to[out=-90, in=20] (run.east);
+  \draw [line] (run.east) to[out=-20, in=90] (runcode.north);
+\end{tikzpicture}
+
+
+\end{document}
