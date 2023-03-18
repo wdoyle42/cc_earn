@@ -7,8 +7,16 @@ paperwidth=10in,
 paperheight=15in,
 margin=.4in,
 ]{geometry}
+\usepackage{xcolor}
 
-\usetikzlibrary{shapes,arrows,positioning}
+\definecolor{uforange}{RGB}{250,70,22}
+\definecolor{ufblue}{RGB}{0,33,165}
+
+\usetikzlibrary{shapes,
+  arrows,
+  positioning,
+  shadows.blur,
+  backgrounds}
 
 
 \begin{document}
@@ -16,10 +24,24 @@ margin=.4in,
 
 
 % Define block styles
-\tikzstyle{block} = [rectangle, draw, text width=12em, text centered,
-rounded corners, minimum height=4em]
-\tikzstyle{code} = [rectangle, draw, text width=23em,
-rounded corners, minimum height=4em]
+\tikzstyle{block} = [rectangle,
+draw,
+text
+width=12em,
+text centered,
+rounded corners,
+minimum height=4em,
+blur shadow={shadow blur steps=5},
+shade,
+top color = ufblue!50,
+bottom color = ufblue!5]
+\tikzstyle{code} = [rectangle,
+draw,
+text width = 25em,
+rounded corners,
+minimum height = 4em,
+very thick,
+fill = uforange!10]
 \tikzstyle{line} = [draw, -latex']
 
 % code examples
@@ -85,8 +107,7 @@ rounded corners, minimum height=4em]
   registerDoParallel(cores = detectCores())
   ## use 10-fold crossvalidation to tune
   tune_res <- tune_grid(tune_wf,
-                        resamples = vfold_cv(df,
-                                             v = 10),
+                        resamples = vfold_cv(df, v = 10),
                         grid = 20)
 \end{myverbbox}
 
